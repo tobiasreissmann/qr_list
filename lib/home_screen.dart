@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +10,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> {
   String item = ''; // stores last value from qrcode
+  List<Object> itemList = [1, 2, 3, 4, 5];
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,76 +18,40 @@ class _HomeScreen extends State<HomeScreen> {
         centerTitle: true,
         title: Text('QR-Shoppinglist'),
       ),
-      body: Column(children: [
-        Row(children: [
-          Expanded(
-            child: Text('Last scanned item: '),
-          ),
-          Expanded(
-            child: Text(item),
-          )
-        ]),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: RaisedButton(
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  splashColor: Colors.grey,
-                  onPressed: scan,
-                  child: const Text('SCAN QR CODE')),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: RaisedButton(
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  splashColor: Colors.grey,
-                  onPressed: () {},
-                  child: const Text('SHOW SHOPPINGLIST')),
-            ),
-          ],
-        ),
-      ]),
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                child: Container(
+                    height: MediaQuery.of(context).size.height - 300,
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(10.0),
+                      itemExtent: 20.0,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Text('entry $index');
+                      },
+                    ))),
+            Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                      margin: const EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
+                      child: ButtonTheme(
+                          minWidth: MediaQuery.of(context).size.width,
+                          height: 150,
+                          child: RaisedButton(
+                            textColor: Colors.white,
+                            onPressed: scan,
+                            child: const Text('SCAN QR CODE'),
+                          )))
+                ])
+          ]),
     );
   }
-
-  // Widget lastItem = Row(children: [
-  //   Expanded(
-  //     child: Text('Last scanned item: '),
-  //   ),
-  //   Expanded(
-  //     child: Text(item),
-  //   )
-  // ]);
-
-  // Widget menuButtons = Column(
-  //   mainAxisAlignment: MainAxisAlignment.center,
-  //   crossAxisAlignment: CrossAxisAlignment.stretch,
-  //   children: <Widget>[
-  //     Padding(
-  //       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-  //       child: RaisedButton(
-  //           color: Colors.green,
-  //           textColor: Colors.white,
-  //           splashColor: Colors.grey,
-  //           onPressed: scan,
-  //           child: const Text('SCAN QR CODE')),
-  //     ),
-  //     Padding(
-  //       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-  //       child: RaisedButton(
-  //           color: Colors.green,
-  //           textColor: Colors.white,
-  //           splashColor: Colors.grey,
-  //           onPressed: () {},
-  //           child: const Text('SHOW SHOPPINGLIST')),
-  //     ),
-  //   ],
-  // );
 
   Future scan() async {
     try {
@@ -95,8 +59,8 @@ class _HomeScreen extends State<HomeScreen> {
       setState(() => this.item = barcode);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        setState(() => this.item =
-            'The camera can only be used, if this application gets granted the permissons for the camera');
+        setState(() =>
+            this.item = 'The camera can only be used, if this application gets granted the permissons for the camera');
       } else {
         setState(() => this.item = 'Unknown error: $e');
       }
