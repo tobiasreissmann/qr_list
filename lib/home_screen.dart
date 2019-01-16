@@ -9,8 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  String item = ''; // stores last value from qrcode
-  List<Object> itemList = [1, 2, 3, 4, 5];
+  List<String> itemList = [];
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,12 +24,54 @@ class _HomeScreen extends State<HomeScreen> {
           children: [
             Expanded(
                 child: Container(
-                    height: MediaQuery.of(context).size.height - 300,
+                    height: MediaQuery.of(context).size.height,
                     child: ListView.builder(
-                      padding: EdgeInsets.all(10.0),
-                      itemExtent: 20.0,
+                      itemCount: itemList.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Text('entry $index');
+                        return Card(
+                          child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Container(
+                                          padding: const EdgeInsets.only(right: 16.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                'Item: ',
+                                                style: TextStyle(fontSize: 16.0),
+                                              ),
+                                              Text(
+                                                itemList[index],
+                                                style: TextStyle(fontSize: 16.0),
+                                              )
+                                            ],
+                                          ))
+                                    ],
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Container(
+                                          // padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Text(
+                                                'Number: ',
+                                                style: TextStyle(fontSize: 16.0),
+                                              ),
+                                              Text(
+                                                itemList[index],
+                                                style: TextStyle(fontSize: 16.0),
+                                              )
+                                            ],
+                                          ))
+                                    ],
+                                  )
+                                ],
+                              )),
+                        );
                       },
                     ))),
             Column(
@@ -39,7 +80,7 @@ class _HomeScreen extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                      margin: const EdgeInsets.only(left: 10.0, bottom: 10.0, right: 10.0),
+                      margin: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 8.0),
                       child: ButtonTheme(
                           minWidth: MediaQuery.of(context).size.width,
                           height: 150,
@@ -56,18 +97,10 @@ class _HomeScreen extends State<HomeScreen> {
   Future scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
-      setState(() => this.item = barcode);
+      setState(() => this.itemList.add(barcode));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        setState(() =>
-            this.item = 'The camera can only be used, if this application gets granted the permissons for the camera');
-      } else {
-        setState(() => this.item = 'Unknown error: $e');
-      }
-    } on FormatException {
-      setState(() => this.item = '');
-    } catch (e) {
-      setState(() => this.item = 'Unknown error: $e');
-    }
+      } else {}
+    } on FormatException {} catch (e) {}
   }
 }
