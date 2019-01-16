@@ -10,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  String item = ''; // stores current value of qrcode
+  String item = ''; // stores last value from qrcode
 
   Widget build(BuildContext context) {
     return Scaffold(
