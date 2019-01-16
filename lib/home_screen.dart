@@ -9,7 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  List<String> itemList = [];
+  List<Item> itemList = [];
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +44,8 @@ class _HomeScreen extends State<HomeScreen> {
                                                 style: TextStyle(fontSize: 16.0),
                                               ),
                                               Text(
-                                                itemList[index],
-                                                style: TextStyle(fontSize: 16.0),
+                                                itemList[index].name,
+                                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                                               )
                                             ],
                                           ))
@@ -56,17 +56,17 @@ class _HomeScreen extends State<HomeScreen> {
                                       Container(
                                           // padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                           child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                'Number: ',
-                                                style: TextStyle(fontSize: 16.0),
-                                              ),
-                                              Text(
-                                                itemList[index],
-                                                style: TextStyle(fontSize: 16.0),
-                                              )
-                                            ],
-                                          ))
+                                        children: <Widget>[
+                                          Text(
+                                            'Number: ',
+                                            style: TextStyle(fontSize: 16.0),
+                                          ),
+                                          Text(
+                                            itemList[index].number,
+                                            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                                          )
+                                        ],
+                                      ))
                                     ],
                                   )
                                 ],
@@ -80,14 +80,13 @@ class _HomeScreen extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   Container(
-                      margin: const EdgeInsets.only(left: 8.0, bottom: 8.0, right: 8.0),
                       child: ButtonTheme(
                           minWidth: MediaQuery.of(context).size.width,
-                          height: 150,
+                          height: 100,
                           child: RaisedButton(
                             textColor: Colors.white,
                             onPressed: scan,
-                            child: const Text('SCAN QR CODE'),
+                            child: const Text('SCAN', style: TextStyle(fontSize: 32.0)),
                           )))
                 ])
           ]),
@@ -96,11 +95,18 @@ class _HomeScreen extends State<HomeScreen> {
 
   Future scan() async {
     try {
-      String barcode = await BarcodeScanner.scan();
-      setState(() => this.itemList.add(barcode));
+      String scan = await BarcodeScanner.scan();
+      setState(() => this.itemList.add(Item('name', scan)));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
       } else {}
     } on FormatException {} catch (e) {}
   }
+}
+
+class Item {
+  String name;
+  String number;
+  
+  Item(this.name, this.number);
 }
