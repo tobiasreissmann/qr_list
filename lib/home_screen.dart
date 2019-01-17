@@ -39,28 +39,30 @@ class _HomeScreen extends State<HomeScreen> {
                                           Column(children: <Widget>[
                                             Container(
                                                 padding: const EdgeInsets.only(right: 16.0),
-                                                width: MediaQuery.of(context).size.width * 0.5,
+                                                width: MediaQuery.of(context).size.width * 0.6,
                                                 child: Row(children: <Widget>[
                                                   Text(
                                                     'Item: ',
-                                                    style: TextStyle(fontSize: 16.0),
+                                                    style: TextStyle(fontSize: 22.0),
                                                     textAlign: TextAlign.left
                                                   ),
                                                   Text(
                                                     itemList[index].name,
-                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
                                                     textAlign: TextAlign.left
                                                   ),
                                                 ]))
                                           ]),
                                           Column(children: <Widget>[
                                             Container(
-                                                width: MediaQuery.of(context).size.width * 0.3,
+                                                width: MediaQuery.of(context).size.width * 0.2,
                                                 // padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                                child: Row(children: <Widget>[
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: <Widget>[
                                                   Text(
                                                     itemList[index].number,
-                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
                                                     textAlign: TextAlign.right
                                                   )
                                                 ]))
@@ -71,7 +73,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                   width: MediaQuery.of(context).size.width * 0.1,
                                                   child: IconButton(
                                                       icon: Icon(Icons.cancel),
-                                                      color: Colors.grey,
+                                                      color: Colors.grey[300],
                                                       onPressed: () {
                                                         setState(() {
                                                           this.itemList.removeAt(index);
