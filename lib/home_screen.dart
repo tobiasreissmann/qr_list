@@ -99,7 +99,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                   controller: mName,
                                                   style: new TextStyle(
                                                     color: Colors.black,
-                                                    fontSize: 22,
+                                                    fontSize: 20,
                                                   ),
                                                   keyboardType: TextInputType.text,
                                                   decoration: const InputDecoration(
@@ -114,7 +114,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                   controller: mNumber,
                                                   style: new TextStyle(
                                                     color: Colors.black,
-                                                    fontSize: 22,
+                                                    fontSize: 20,
                                                   ),
                                                   keyboardType: TextInputType.number,
                                                   decoration: const InputDecoration(
