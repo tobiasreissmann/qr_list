@@ -27,7 +27,10 @@ class _HomeScreen extends State<HomeScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           // centerTitle: true,
-          title: Text('QR-Shoppinglist', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),),
+          title: Text(
+            'QR-Shoppinglist',
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),
+          ),
         ),
         body: Stack(
           children: <Widget>[
@@ -40,6 +43,7 @@ class _HomeScreen extends State<HomeScreen> {
                       child: Container(
                           height: MediaQuery.of(context).size.height,
                           child: ListView.builder(
+                            padding: EdgeInsets.only(top: 16),
                             itemCount: itemList.length + 1,
                             itemBuilder: (BuildContext context, int index) {
                               if (index < itemList.length) {
@@ -47,36 +51,29 @@ class _HomeScreen extends State<HomeScreen> {
                                     child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(children: <Widget>[
-                                          Column(children: <Widget>[
-                                            Container(
-                                              padding: const EdgeInsets.only(right: 16.0),
-                                              width: MediaQuery.of(context).size.width * 0.6,
-                                              child: Row(children: <Widget>[
-                                                Text(
+                                          Flexible(
+                                              flex: 0,
+                                              child: Container(
+                                                width: MediaQuery.of(context).size.width * 0.6,
+                                                padding: const EdgeInsets.only(right: 16.0),
+                                                child: Text(
                                                   itemList[index].name,
-                                                  style: TextStyle(fontSize: 18.0),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.fade,
+                                                  style: TextStyle(fontSize: 20.0),
+                                                  overflow: TextOverflow.ellipsis,
                                                   textAlign: TextAlign.left,
                                                 ),
-                                              ]),
-                                            )
-                                          ]),
-                                          Column(children: <Widget>[
-                                            Container(
-                                                width: MediaQuery.of(context).size.width * 0.2,
-                                                // padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                                child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                                    children: <Widget>[
-                                                      Text(itemList[index].number,
-                                                          style: TextStyle(fontSize: 26.0), textAlign: TextAlign.right)
-                                                    ]))
-                                          ]),
-                                          Column(
-                                            children: <Widget>[
-                                              Container(
-                                                  width: MediaQuery.of(context).size.width * 0.1,
+                                              )),
+                                          Flexible(
+                                              fit: FlexFit.tight,
+                                              child: Container(
+                                                  child: Text(itemList[index].number,
+                                                      style: TextStyle(fontSize: 26.0),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.left))),
+                                          Flexible(
+                                              flex: 1,
+                                              child: Container(
+                                                  alignment: Alignment.centerRight,
                                                   child: IconButton(
                                                       icon: Icon(Icons.cancel),
                                                       color: Colors.grey[300],
@@ -84,54 +81,56 @@ class _HomeScreen extends State<HomeScreen> {
                                                         setState(() {
                                                           this.itemList.removeAt(index);
                                                         });
-                                                      }))
-                                            ],
-                                          )
+                                                      })))
                                         ])));
                               } else {
                                 return Column(
                                   children: <Widget>[
                                     Card(
                                         child: Padding(
-                                      padding: const EdgeInsets.all(8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Row(children: <Widget>[
-                                        Column(children: <Widget>[
-                                          Container(
-                                              width: MediaQuery.of(context).size.width * 0.4,
-                                              padding: EdgeInsets.only(right: 4),
-                                              child: TextFormField(
-                                                controller: mName,
-                                                keyboardType: TextInputType.text,
-                                                decoration: const InputDecoration(
-                                                  labelText: 'Item',
-                                                ),
-                                              ))
-                                        ]),
-                                        Column(
-                                          children: <Widget>[
-                                            Container(
+                                        Flexible(
+                                            flex: 0,
+                                            child: Container(
+                                                width: MediaQuery.of(context).size.width * 0.4,
+                                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                                child: TextFormField(
+                                                  controller: mName,
+                                                  style: new TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 22,
+                                                  ),
+                                                  keyboardType: TextInputType.text,
+                                                  decoration: const InputDecoration(
+                                                    labelText: 'Item',
+                                                  ),
+                                                ))),
+                                        Flexible(
+                                            flex: 0,
+                                            child: Container(
                                                 width: MediaQuery.of(context).size.width * 0.4,
                                                 child: TextFormField(
                                                   controller: mNumber,
+                                                  style: new TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 22,
+                                                  ),
                                                   keyboardType: TextInputType.number,
                                                   decoration: const InputDecoration(
                                                     labelText: 'Number',
                                                   ),
-                                                ))
-                                          ],
-                                        ),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Container(
-                                                width: MediaQuery.of(context).size.width * 0.1,
+                                                ))),
+                                        Flexible(
+                                            flex: 1,
+                                            child: Container(
+                                                alignment: Alignment.centerRight,
+                                                // width: MediaQuery.of(context).size.width * 0.1,
                                                 child: IconButton(
                                                   icon: Icon(Icons.check),
                                                   color: Colors.green[300],
                                                   onPressed: save,
-                                                ))
-                                          ],
-                                        )
+                                                )))
                                       ]),
                                     )),
                                     Container(height: 116)
@@ -154,7 +153,8 @@ class _HomeScreen extends State<HomeScreen> {
                               child: RaisedButton(
                                   textColor: Colors.green,
                                   onPressed: scan,
-                                  child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                                  child:
+                                      const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))))),
                     )),
                   ])
