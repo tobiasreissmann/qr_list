@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+// import 'package:flutter/gestures.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,12 +48,18 @@ class _HomeScreen extends State<HomeScreen> {
                                         child: Row(children: <Widget>[
                                           Column(children: <Widget>[
                                             Container(
-                                                padding: const EdgeInsets.only(right: 16.0),
-                                                width: MediaQuery.of(context).size.width * 0.6,
-                                                child: Row(children: <Widget>[
-                                                  Text(itemList[index].name,
-                                                      style: TextStyle(fontSize: 18.0), textAlign: TextAlign.left),
-                                                ]))
+                                              padding: const EdgeInsets.only(right: 16.0),
+                                              width: MediaQuery.of(context).size.width * 0.6,
+                                              child: Row(children: <Widget>[
+                                                Text(
+                                                  itemList[index].name,
+                                                  style: TextStyle(fontSize: 18.0),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.fade,
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ]),
+                                            )
                                           ]),
                                           Column(children: <Widget>[
                                             Container(
@@ -113,6 +120,7 @@ class _HomeScreen extends State<HomeScreen> {
                                           ],
                                         ),
                                         Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: <Widget>[
                                             Container(
                                                 width: MediaQuery.of(context).size.width * 0.1,
@@ -142,10 +150,10 @@ class _HomeScreen extends State<HomeScreen> {
                               minWidth: MediaQuery.of(context).size.width / 2,
                               height: 100,
                               child: RaisedButton(
-                                textColor: Colors.white,
-                                onPressed: scan,
-                                child: const Text('SCAN', style: TextStyle(fontSize: 32.0)),
-                              ))),
+                                  textColor: Colors.white,
+                                  onPressed: scan,
+                                  child: const Text('SCAN', style: TextStyle(fontSize: 32.0)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))))),
                     )),
                   ])
                 : Container(),
@@ -170,7 +178,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   save() {
     setState(() {
-      if(mName.text != '' && mNumber.text != '') {
+      if (mName.text != '' && mNumber.text != '') {
         itemList.add(Item(mName.text, mNumber.text));
         mName.text = '';
         mNumber.text = '';
