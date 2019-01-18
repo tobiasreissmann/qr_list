@@ -10,6 +10,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> {
   List<Item> itemList = [];
+  TextEditingController mName = TextEditingController();
+  TextEditingController mNumber = TextEditingController();
+
+  @override
+  void dispose() {
+    mName.dispose();
+    mName.dispose();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     final bool showScan = MediaQuery.of(context).viewInsets.bottom == 0.0;
@@ -34,23 +43,15 @@ class _HomeScreen extends State<HomeScreen> {
                               if (index < itemList.length) {
                                 return Card(
                                     child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Row(children: <Widget>[
                                           Column(children: <Widget>[
                                             Container(
                                                 padding: const EdgeInsets.only(right: 16.0),
                                                 width: MediaQuery.of(context).size.width * 0.6,
                                                 child: Row(children: <Widget>[
-                                                  Text(
-                                                    'Item: ',
-                                                    style: TextStyle(fontSize: 22.0),
-                                                    textAlign: TextAlign.left
-                                                  ),
-                                                  Text(
-                                                    itemList[index].name,
-                                                    style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-                                                    textAlign: TextAlign.left
-                                                  ),
+                                                  Text(itemList[index].name,
+                                                      style: TextStyle(fontSize: 18.0), textAlign: TextAlign.left),
                                                 ]))
                                           ]),
                                           Column(children: <Widget>[
@@ -58,14 +59,11 @@ class _HomeScreen extends State<HomeScreen> {
                                                 width: MediaQuery.of(context).size.width * 0.2,
                                                 // padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                                 child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                                  children: <Widget>[
-                                                  Text(
-                                                    itemList[index].number,
-                                                    style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-                                                    textAlign: TextAlign.right
-                                                  )
-                                                ]))
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Text(itemList[index].number,
+                                                          style: TextStyle(fontSize: 26.0), textAlign: TextAlign.right)
+                                                    ]))
                                           ]),
                                           Column(
                                             children: <Widget>[
@@ -87,15 +85,46 @@ class _HomeScreen extends State<HomeScreen> {
                                   children: <Widget>[
                                     Card(
                                         child: Padding(
-                                            padding: const EdgeInsets.only(top: 4, bottom: 4, left: 16, right: 16),
-                                            child: TextFormField(
-                                              decoration: const InputDecoration(
-                                                labelText: 'Item',
-                                              ),
-                                              onSaved: (text) {
-                                                this.itemList.add(Item(text, '0000'));
-                                              },
-                                            ))),
+                                      padding: const EdgeInsets.all(8),
+                                      child: Row(children: <Widget>[
+                                        Column(children: <Widget>[
+                                          Container(
+                                              width: MediaQuery.of(context).size.width * 0.4,
+                                              padding: EdgeInsets.only(right: 4),
+                                              child: TextFormField(
+                                                controller: mName,
+                                                keyboardType: TextInputType.text,
+                                                decoration: const InputDecoration(
+                                                  labelText: 'Item',
+                                                ),
+                                              ))
+                                        ]),
+                                        Column(
+                                          children: <Widget>[
+                                            Container(
+                                                width: MediaQuery.of(context).size.width * 0.4,
+                                                child: TextFormField(
+                                                  controller: mNumber,
+                                                  keyboardType: TextInputType.number,
+                                                  decoration: const InputDecoration(
+                                                    labelText: 'Number',
+                                                  ),
+                                                ))
+                                          ],
+                                        ),
+                                        Column(
+                                          children: <Widget>[
+                                            Container(
+                                                width: MediaQuery.of(context).size.width * 0.1,
+                                                child: IconButton(
+                                                  icon: Icon(Icons.check),
+                                                  color: Colors.green[300],
+                                                  onPressed: save,
+                                                ))
+                                          ],
+                                        )
+                                      ]),
+                                    )),
                                     Container(height: 116)
                                   ],
                                 );
@@ -128,12 +157,25 @@ class _HomeScreen extends State<HomeScreen> {
     try {
       String scan = await BarcodeScanner.scan();
       RegExp expNumber = new RegExp(r"([0-9])\w+");
-      RegExp expName = new RegExp(r"kg\s([^\n]*)|Stück\s*([^\n]*)|Bund\s([^\n]*)");
-      setState(() => this.itemList.add(Item(expName.stringMatch(scan), expNumber.stringMatch(scan))));
+      // RegExp expName = new RegExp(r"^.*\skg\s|^.*\sStück\s|^.*\sBund\s");
+      RegExp expValid = new RegExp(r"^VG\s([0-9]{3,4})");
+      if (expValid.hasMatch(scan)) {
+        setState(() => this.itemList.add(Item(scan.split(" kg ")[1], expNumber.stringMatch(scan))));
+      }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
       } else {}
     } on FormatException {} catch (e) {}
+  }
+
+  save() {
+    setState(() {
+      if(mName.text != '' && mNumber.text != '') {
+        itemList.add(Item(mName.text, mNumber.text));
+        mName.text = '';
+        mNumber.text = '';
+      }
+    });
   }
 }
 
