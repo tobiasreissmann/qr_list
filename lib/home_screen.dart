@@ -13,6 +13,7 @@ class _HomeScreen extends State<HomeScreen> {
   List<Item> itemList = [];
   TextEditingController mName = TextEditingController();
   TextEditingController mNumber = TextEditingController();
+  var _ev = 0;
 
   @override
   void dispose() {
@@ -31,6 +32,23 @@ class _HomeScreen extends State<HomeScreen> {
             'QR-Shoppinglist',
             style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),
           ),
+          actions: _ev > 6
+              ? <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.favorite),
+                      color: Colors.red,
+                      onPressed: () {
+                        return AlertDialog(content: Text('A.L.F.'), actions: <Widget>[
+                          FlatButton(
+                            child: Icon(Icons.favorite_border),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ]);
+                      })
+                ]
+              : null,
         ),
         body: Stack(
           children: <Widget>[
@@ -167,10 +185,22 @@ class _HomeScreen extends State<HomeScreen> {
     try {
       String scan = await BarcodeScanner.scan();
       RegExp expNumber = new RegExp(r"([0-9])\w+");
-      // RegExp expName = new RegExp(r"^.*\skg\s|^.*\sStück\s|^.*\sBund\s");
+      RegExp expNameKg = new RegExp(r"^.*\skg\s");
+      RegExp expNameBund = new RegExp(r"^.*\sBund\s");
+      RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
       RegExp expValid = new RegExp(r"^VG\s([0-9]{3,4})");
       if (expValid.hasMatch(scan)) {
-        setState(() => this.itemList.add(Item(scan.split(" kg ")[1], expNumber.stringMatch(scan))));
+        if (expNameKg.hasMatch(scan)) {
+          setState(() => this.itemList.add(Item(scan.split(" kg ")[1], expNumber.stringMatch(scan))));
+        } else {
+          if (expNameBund.hasMatch(scan)) {
+            setState(() => this.itemList.add(Item(scan.split(" Bund ")[1], expNumber.stringMatch(scan))));
+          } else {
+            if (expNameStueck.hasMatch(scan)) {
+              setState(() => this.itemList.add(Item(scan.split(" Stück ")[1], expNumber.stringMatch(scan))));
+            }
+          }
+        }
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
@@ -179,11 +209,13 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   save() {
+    _ev++;
     setState(() {
       if (mName.text != '' && mNumber.text != '') {
         itemList.add(Item(mName.text, mNumber.text));
         mName.text = '';
         mNumber.text = '';
+        _ev = 0;
       }
     });
   }
