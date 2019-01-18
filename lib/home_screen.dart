@@ -25,8 +25,9 @@ class _HomeScreen extends State<HomeScreen> {
     final bool showScan = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          title: Text('QR-Shoppinglist'),
+          backgroundColor: Colors.white,
+          // centerTitle: true,
+          title: Text('QR-Shoppinglist', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),),
         ),
         body: Stack(
           children: <Widget>[
@@ -149,10 +150,11 @@ class _HomeScreen extends State<HomeScreen> {
                           child: ButtonTheme(
                               minWidth: MediaQuery.of(context).size.width / 2,
                               height: 100,
+                              buttonColor: Colors.white,
                               child: RaisedButton(
-                                  textColor: Colors.white,
+                                  textColor: Colors.green,
                                   onPressed: scan,
-                                  child: const Text('SCAN', style: TextStyle(fontSize: 32.0)),
+                                  child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))))),
                     )),
                   ])
