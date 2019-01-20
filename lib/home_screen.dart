@@ -37,16 +37,7 @@ class _HomeScreen extends State<HomeScreen> {
                   IconButton(
                       icon: Icon(Icons.favorite),
                       color: Colors.red,
-                      onPressed: () {
-                        return AlertDialog(content: Text('A.L.F.'), actions: <Widget>[
-                          FlatButton(
-                            child: Icon(Icons.favorite_border),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ]);
-                      })
+                      onPressed: () {})
                 ]
               : null,
         ),
