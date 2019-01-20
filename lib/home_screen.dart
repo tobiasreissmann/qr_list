@@ -52,46 +52,54 @@ class _HomeScreen extends State<HomeScreen> {
                             itemCount: itemList.length + 1,
                             itemBuilder: (BuildContext context, int index) {
                               if (index < itemList.length) {
-                                return Padding(
-                                    padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8, right: 8),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(children: <Widget>[
-                                          Flexible(
-                                              flex: 0,
-                                              child: Container(
-                                                width: MediaQuery.of(context).size.width * 0.6,
-                                                padding: const EdgeInsets.only(right: 16.0),
-                                                child: Text(
-                                                  itemList[index].name,
-                                                  style: TextStyle(fontSize: 20.0),
-                                                  overflow: TextOverflow.ellipsis,
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              )),
-                                          Flexible(
-                                              fit: FlexFit.tight,
-                                              child: Container(
-                                                  child: Text(itemList[index].number,
-                                                      style: TextStyle(fontSize: 26.0),
+                                final item = itemList[index];
+                                return Dismissible(
+                                    key: Key(item.name),
+                                    onDismissed: (direction) {
+                                      setState(() {
+                                        itemList.removeAt(index);
+                                      });
+                                    },
+                                    child: Padding(
+                                        padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8, right: 8),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Row(children: <Widget>[
+                                              Flexible(
+                                                  flex: 0,
+                                                  child: Container(
+                                                    width: MediaQuery.of(context).size.width * 0.6,
+                                                    padding: const EdgeInsets.only(right: 16.0),
+                                                    child: Text(
+                                                      item.name,
+                                                      style: TextStyle(fontSize: 20.0),
                                                       overflow: TextOverflow.ellipsis,
-                                                      textAlign: TextAlign.left))),
-                                          Flexible(
-                                              flex: 1,
-                                              child: Container(
-                                                  alignment: Alignment.centerRight,
-                                                  child: IconButton(
-                                                      icon: Icon(Icons.cancel),
-                                                      color: Colors.grey[300],
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          this.itemList.removeAt(index);
-                                                        });
-                                                      })))
-                                        ]),
-                                        Divider()
-                                      ],
-                                    ));
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                  )),
+                                              Flexible(
+                                                  fit: FlexFit.tight,
+                                                  child: Container(
+                                                      child: Text(item.number,
+                                                          style: TextStyle(fontSize: 26.0),
+                                                          overflow: TextOverflow.ellipsis,
+                                                          textAlign: TextAlign.left))),
+                                              Flexible(
+                                                  flex: 1,
+                                                  child: Container(
+                                                      alignment: Alignment.centerRight,
+                                                      child: IconButton(
+                                                          icon: Icon(Icons.cancel),
+                                                          color: Colors.grey[300],
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              this.itemList.removeAt(index);
+                                                            });
+                                                          })))
+                                            ]),
+                                            Divider()
+                                          ],
+                                        )));
                               } else {
                                 return Column(
                                   children: <Widget>[
