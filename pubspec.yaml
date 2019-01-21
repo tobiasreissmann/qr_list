@@ -19,6 +19,7 @@ dev_dependencies:
   path_provider: 0.4.1
   barcode_scan: ^0.0.4
   vibrate: any
+  sqflite: any
 
 flutter:
 

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
 import 'package:vibrate/vibrate.dart';
-// import 'package:flutter/gestures.dart';
+import 'package:sqflite/sqflite.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class _HomeScreen extends State<HomeScreen> {
   List<Item> itemList = [];
   TextEditingController mName = TextEditingController();
   TextEditingController mNumber = TextEditingController();
+
   bool alphabetical = false;
   var _ev = 0;
 
@@ -22,6 +24,12 @@ class _HomeScreen extends State<HomeScreen> {
     mName.dispose();
     mName.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
   }
 
   Widget build(BuildContext context) {
@@ -52,7 +60,16 @@ class _HomeScreen extends State<HomeScreen> {
                 onPressed: () {
                   setState(() {
                     alphabetical = !alphabetical;
+                    if (alphabetical) {
+                      itemList.sort((a, b) => a.name.compareTo(b.name));
+                    }
                   });
+                }),
+            IconButton(
+                icon: Icon(Icons.remove_circle),
+                color: Colors.grey,
+                onPressed: () {
+                  deleteItemList();
                 })
           ],
         ),
@@ -76,9 +93,8 @@ class _HomeScreen extends State<HomeScreen> {
                                         return Dismissible(
                                             key: Key(item.name),
                                             onDismissed: (direction) {
-                                              setState(() {
-                                                itemList.removeAt(index);
-                                              });
+                                              removeItem(itemList[index].name, itemList[index].number);
+                                              setState(() => itemList.removeAt(index));
                                             },
                                             child: Padding(
                                                 padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8, right: 8),
@@ -104,18 +120,6 @@ class _HomeScreen extends State<HomeScreen> {
                                                                   style: TextStyle(fontSize: 26.0),
                                                                   overflow: TextOverflow.ellipsis,
                                                                   textAlign: TextAlign.left))),
-                                                      Flexible(
-                                                          flex: 1,
-                                                          child: Container(
-                                                              alignment: Alignment.centerRight,
-                                                              child: IconButton(
-                                                                  icon: Icon(Icons.cancel),
-                                                                  color: Colors.grey[300],
-                                                                  onPressed: () {
-                                                                    setState(() {
-                                                                      this.itemList.removeAt(index);
-                                                                    });
-                                                                  })))
                                                     ]),
                                                     Divider()
                                                   ],
@@ -145,7 +149,8 @@ class _HomeScreen extends State<HomeScreen> {
                                                 Flexible(
                                                     flex: 0,
                                                     child: Container(
-                                                        width: MediaQuery.of(context).size.width * 0.4,
+                                                        width: MediaQuery.of(context).size.width * 0.5,
+                                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                                         child: TextFormField(
                                                           controller: mNumber,
                                                           style: new TextStyle(
@@ -165,11 +170,13 @@ class _HomeScreen extends State<HomeScreen> {
                                                         child: IconButton(
                                                           icon: Icon(Icons.check),
                                                           color: Colors.green[300],
-                                                          onPressed: save,
+                                                          onPressed: () {
+                                                            return save(context);
+                                                          },
                                                         )))
                                               ]),
                                             ),
-                                            Container(height: 116)
+                                            Container(height: 130)
                                           ],
                                         );
                                       }
@@ -218,13 +225,7 @@ class _HomeScreen extends State<HomeScreen> {
             Vibrate.feedback(FeedbackType.error);
             return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
           } else {
-            Vibrate.feedback(FeedbackType.success);
-            setState(() {
-              itemList.add(Item(name, number));
-              if (alphabetical == true) {
-                itemList.sort((a, b) => a.name.compareTo(b.name));
-              }
-            });
+            await addItem(name, number);
           }
         } else {
           if (expNameBund.hasMatch(scan)) {
@@ -234,13 +235,7 @@ class _HomeScreen extends State<HomeScreen> {
               Vibrate.feedback(FeedbackType.error);
               return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
             } else {
-              Vibrate.feedback(FeedbackType.success);
-              setState(() {
-                itemList.add(Item(name, number));
-                if (alphabetical == true) {
-                  itemList.sort((a, b) => a.name.compareTo(b.name));
-                }
-              });
+              await addItem(name, number);
             }
           } else {
             if (expNameStueck.hasMatch(scan)) {
@@ -250,13 +245,7 @@ class _HomeScreen extends State<HomeScreen> {
                 Vibrate.feedback(FeedbackType.error);
                 return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
               } else {
-                Vibrate.feedback(FeedbackType.success);
-                setState(() {
-                  itemList.add(Item(name, number));
-                  if (alphabetical == true) {
-                    itemList.sort((a, b) => a.name.compareTo(b.name));
-                  }
-                });
+                await addItem(name, number);
               }
             } else {
               return Scaffold.of(context).showSnackBar(SnackBar(content: Text('There was a problem recognizing the item.')));
@@ -274,16 +263,75 @@ class _HomeScreen extends State<HomeScreen> {
     return null;
   }
 
-  save() {
-    _ev++;
-    setState(() {
-      if (mName.text != '' && mNumber.text != '') {
-        itemList.add(Item(mName.text, mNumber.text));
-        mName.text = '';
-        mNumber.text = '';
-        _ev = 0;
+  save(BuildContext context) async {
+    setState(() => _ev++);
+    if (itemList.where((item) => item.name == mName.text && item.number == mNumber.text).toList().length > 0) {
+      Vibrate.feedback(FeedbackType.error);
+      return Scaffold.of(context).showSnackBar(SnackBar(content: Text('The list already contains this item.')));
+    } else {
+      if (itemList.where((item) => item.number == mNumber.text).toList().length > 0) {
+        Vibrate.feedback(FeedbackType.error);
+        return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This number is already taken.')));
+      } else {
+        if (mName.text != '' && mNumber.text != '') {
+          var name = mName.text;
+          var number = mNumber.text;
+          await addItem(name, number);
+          mName.text = '';
+          mNumber.text = '';
+          _ev = 0;
+        }
       }
+      return null;
+    }
+  }
+
+  void getData() async {
+    String path = join(await getDatabasesPath(), 'items.db');
+    Database database = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
+      await db.execute('CREATE TABLE Items (name TEXT, number TEXT PRIMARY KEY)');
     });
+    List<Map> list = await database.rawQuery('SELECT * FROM Items');
+    List<Item> _itemList = [];
+    for (var i = 0; i < list.length; i++) {
+      _itemList.add(Item(list[i]['name'], list[i]['number']));
+    }
+    setState(() => itemList = _itemList);
+    await database.close();
+  }
+
+  deleteItemList() async {
+    String path = join(await getDatabasesPath(), 'items.db');
+    Database database = await openDatabase(path);
+      await database.transaction((txn) async {
+        await txn.rawInsert('DELETE FROM Items');
+      });
+    getData();
+  }
+
+  addItem(String name, String number) async {
+    if (name != '' && number != '') {
+      Vibrate.feedback(FeedbackType.success);
+      String path = join(await getDatabasesPath(), 'items.db');
+      Database database = await openDatabase(path);
+      await database.transaction((txn) async {
+        await txn.rawInsert('INSERT INTO Items(name, number) VALUES("$name", "$number")');
+      });
+      // await database.close();
+      setState(() {
+        itemList.add(Item(name, number));
+        if (alphabetical) {
+          itemList.sort((a, b) => a.name.compareTo(b.name));
+        }
+      });
+    } else {}
+  }
+
+  removeItem(String name, String number) async {
+    String path = join(await getDatabasesPath(), 'items.db');
+    Database database = await openDatabase(path);
+    await database.rawDelete('DELETE FROM Items WHERE number = $number');
+    getData();
   }
 }
 
