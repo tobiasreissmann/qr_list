@@ -14,6 +14,7 @@ class _HomeScreen extends State<HomeScreen> {
   List<Item> itemList = [];
   TextEditingController mName = TextEditingController();
   TextEditingController mNumber = TextEditingController();
+  bool alphabetical = false;
   var _ev = 0;
 
   @override
@@ -29,13 +30,31 @@ class _HomeScreen extends State<HomeScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
-          // centerTitle: true,
           title: Text(
             'QR-Shoppinglist',
             style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),
           ),
-          actions:
-              _ev > 6 ? <Widget>[IconButton(icon: Icon(Icons.favorite), color: Colors.red, onPressed: () {})] : null,
+          actions: <Widget>[
+            Container(
+                child: _ev > 6
+                    ? IconButton(
+                        icon: Icon(Icons.favorite),
+                        color: Colors.red,
+                        onPressed: () {
+                          setState(() {
+                            _ev = 0;
+                          });
+                        })
+                    : null),
+            IconButton(
+                icon: Icon(Icons.sort_by_alpha),
+                color: alphabetical ? Colors.green : Colors.grey,
+                onPressed: () {
+                  setState(() {
+                    alphabetical = !alphabetical;
+                  });
+                })
+          ],
         ),
         body: Builder(
             builder: (context) => Stack(
@@ -173,8 +192,7 @@ class _HomeScreen extends State<HomeScreen> {
                                           onPressed: () {
                                             return scan(context);
                                           },
-                                          child: const Text('SCAN',
-                                              style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                                          child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))))),
                             )),
                           ])
@@ -201,7 +219,12 @@ class _HomeScreen extends State<HomeScreen> {
             return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
           } else {
             Vibrate.feedback(FeedbackType.success);
-            setState(() => this.itemList.add(Item(name, number)));
+            setState(() {
+              itemList.add(Item(name, number));
+              if (alphabetical == true) {
+                itemList.sort((a, b) => a.name.compareTo(b.name));
+              }
+            });
           }
         } else {
           if (expNameBund.hasMatch(scan)) {
@@ -212,7 +235,12 @@ class _HomeScreen extends State<HomeScreen> {
               return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
             } else {
               Vibrate.feedback(FeedbackType.success);
-              setState(() => this.itemList.add(Item(name, number)));
+              setState(() {
+                itemList.add(Item(name, number));
+                if (alphabetical == true) {
+                  itemList.sort((a, b) => a.name.compareTo(b.name));
+                }
+              });
             }
           } else {
             if (expNameStueck.hasMatch(scan)) {
@@ -223,11 +251,15 @@ class _HomeScreen extends State<HomeScreen> {
                 return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item was already scanned.')));
               } else {
                 Vibrate.feedback(FeedbackType.success);
-                setState(() => this.itemList.add(Item(name, number)));
+                setState(() {
+                  itemList.add(Item(name, number));
+                  if (alphabetical == true) {
+                    itemList.sort((a, b) => a.name.compareTo(b.name));
+                  }
+                });
               }
             } else {
-              return Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text('There was a problem recognizing the item.')));
+              return Scaffold.of(context).showSnackBar(SnackBar(content: Text('There was a problem recognizing the item.')));
             }
           }
         }
@@ -236,8 +268,7 @@ class _HomeScreen extends State<HomeScreen> {
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        return Scaffold.of(context)
-            .showSnackBar(SnackBar(content: Text('To scan items the permisson for camera access is required.')));
+        return Scaffold.of(context).showSnackBar(SnackBar(content: Text('To scan items the permisson for camera access is required.')));
       } else {}
     } on FormatException {} catch (e) {}
     return null;
