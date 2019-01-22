@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,24 +13,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  List<Item> itemList = [];
-  TextEditingController mName = TextEditingController();
-  TextEditingController mNumber = TextEditingController();
+  List<Item> itemList;
+  TextEditingController mName;
+  TextEditingController mNumber;
 
   bool alphabetical = false;
   var _ev = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    itemList = [];
+    readSetting();
+    getData();
+    mName = TextEditingController();
+    mNumber = TextEditingController();
+  }
 
   @override
   void dispose() {
     mName.dispose();
     mName.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getData();
   }
 
   Widget build(BuildContext context) {
@@ -62,7 +67,10 @@ class _HomeScreen extends State<HomeScreen> {
                     alphabetical = !alphabetical;
                     if (alphabetical) {
                       itemList.sort((a, b) => a.name.compareTo(b.name));
+                    } else {
+                      getData();
                     }
+                    saveSetting();
                   });
                 }),
             IconButton(
@@ -146,11 +154,12 @@ class _HomeScreen extends State<HomeScreen> {
                                                             labelText: 'Item',
                                                           ),
                                                         ))),
+                                                Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
                                                 Flexible(
                                                     flex: 0,
                                                     child: Container(
-                                                        width: MediaQuery.of(context).size.width * 0.5,
-                                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                                        width: MediaQuery.of(context).size.width * 0.4,
+                                                        padding: EdgeInsets.symmetric(horizontal: 4),
                                                         child: TextFormField(
                                                           controller: mNumber,
                                                           style: new TextStyle(
@@ -265,25 +274,41 @@ class _HomeScreen extends State<HomeScreen> {
 
   save(BuildContext context) async {
     setState(() => _ev++);
-    if (itemList.where((item) => item.name == mName.text && item.number == mNumber.text).toList().length > 0) {
+
+    if (mNumber.text == '' || mName.text == '') {
       Vibrate.feedback(FeedbackType.error);
-      return Scaffold.of(context).showSnackBar(SnackBar(content: Text('The list already contains this item.')));
+      return Scaffold.of(context).showSnackBar(SnackBar(content: Text('There are fields left that need to be filled.')));
     } else {
-      if (itemList.where((item) => item.number == mNumber.text).toList().length > 0) {
+      if (itemList.where((item) => item.name == mName.text && item.number == mNumber.text).toList().length > 0) {
         Vibrate.feedback(FeedbackType.error);
-        return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This number is already taken.')));
+        return Scaffold.of(context).showSnackBar(SnackBar(content: Text('The list already contains this item.')));
       } else {
-        if (mName.text != '' && mNumber.text != '') {
-          var name = mName.text;
-          var number = mNumber.text;
-          await addItem(name, number);
-          mName.text = '';
-          mNumber.text = '';
-          _ev = 0;
+        if (itemList.where((item) => item.number == mNumber.text).toList().length > 0) {
+          Vibrate.feedback(FeedbackType.error);
+          return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This number is already taken.')));
+        } else {
+          if (mName.text != '' && mNumber.text != '') {
+            var name = mName.text;
+            var number = mNumber.text;
+            await addItem(name, number);
+            mName.text = '';
+            mNumber.text = '';
+            _ev = 0;
+          }
         }
+        return null;
       }
-      return null;
     }
+  }
+
+  void saveSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('alphabetical', alphabetical);
+  }
+
+  void readSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() => alphabetical = prefs.getBool('alphabetical') ?? false);
   }
 
   void getData() async {
@@ -296,28 +321,32 @@ class _HomeScreen extends State<HomeScreen> {
     for (var i = 0; i < list.length; i++) {
       _itemList.add(Item(list[i]['name'], list[i]['number']));
     }
-    setState(() => itemList = _itemList);
+    setState(() {
+      itemList = _itemList;
+      if (alphabetical) {
+        itemList.sort((a, b) => a.name.compareTo(b.name));
+      }
+    });
     await database.close();
   }
 
   deleteItemList() async {
     String path = join(await getDatabasesPath(), 'items.db');
     Database database = await openDatabase(path);
-      await database.transaction((txn) async {
-        await txn.rawInsert('DELETE FROM Items');
-      });
+    await database.transaction((txn) async {
+      await txn.rawInsert('DELETE FROM Items');
+    });
     getData();
   }
 
   addItem(String name, String number) async {
     if (name != '' && number != '') {
-      Vibrate.feedback(FeedbackType.success);
+      Vibrate.feedback(FeedbackType.light);
       String path = join(await getDatabasesPath(), 'items.db');
       Database database = await openDatabase(path);
       await database.transaction((txn) async {
         await txn.rawInsert('INSERT INTO Items(name, number) VALUES("$name", "$number")');
       });
-      // await database.close();
       setState(() {
         itemList.add(Item(name, number));
         if (alphabetical) {
