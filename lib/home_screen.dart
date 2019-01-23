@@ -138,8 +138,7 @@ class _HomeScreen extends State<HomeScreen> {
                                           children: <Widget>[
                                             Padding(
                                               padding: const EdgeInsets.only(left: 16),
-                                              child: Row(
-                                                children: <Widget>[
+                                              child: Row(children: <Widget>[
                                                 Flexible(
                                                     flex: 0,
                                                     child: Container(
@@ -346,7 +345,6 @@ class _HomeScreen extends State<HomeScreen> {
       await database.transaction((txn) async {
         await txn.rawInsert('INSERT INTO Items(name, number) VALUES("$name", "$number")');
       });
-      print(await database.rawQuery('SELECT * FROM Items'));
       setState(() {
         itemList.add(Item(name, number));
         if (alphabetical) {
@@ -359,7 +357,7 @@ class _HomeScreen extends State<HomeScreen> {
   removeItem(String name, String number) async {
     String path = join(await getDatabasesPath(), 'items.db');
     Database database = await openDatabase(path);
-    await database.rawDelete('DELETE FROM Items WHERE number = $number');
+    await database.rawDelete('DELETE FROM Items WHERE number = "$number"');
     getData();
   }
 }
