@@ -41,6 +41,7 @@ class _HomeScreen extends State<HomeScreen> {
     final bool showScan = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
         appBar: AppBar(
+          brightness: Brightness.light,
           backgroundColor: Colors.white,
           elevation: 0.0,
           title: Text(
@@ -74,8 +75,8 @@ class _HomeScreen extends State<HomeScreen> {
                   });
                 }),
             IconButton(
-                icon: Icon(Icons.remove_circle),
-                color: Colors.grey,
+                icon: Icon(Icons.delete_sweep),
+                color: Colors.red[700],
                 onPressed: () {
                   deleteItemList();
                 })
@@ -105,15 +106,14 @@ class _HomeScreen extends State<HomeScreen> {
                                               setState(() => itemList.removeAt(index));
                                             },
                                             child: Padding(
-                                                padding: const EdgeInsets.only(left: 16.0, top: 8, bottom: 8, right: 8),
+                                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                                                 child: Column(
                                                   children: <Widget>[
                                                     Row(children: <Widget>[
                                                       Flexible(
                                                           flex: 0,
                                                           child: Container(
-                                                            width: MediaQuery.of(context).size.width * 0.6,
-                                                            padding: const EdgeInsets.only(right: 16.0),
+                                                            width: MediaQuery.of(context).size.width * 0.7,
                                                             child: Text(
                                                               item.name,
                                                               style: TextStyle(fontSize: 20.0),
@@ -124,6 +124,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                       Flexible(
                                                           fit: FlexFit.tight,
                                                           child: Container(
+                                                              alignment: Alignment.centerRight,
                                                               child: Text(item.number,
                                                                   style: TextStyle(fontSize: 26.0),
                                                                   overflow: TextOverflow.ellipsis,
@@ -136,13 +137,13 @@ class _HomeScreen extends State<HomeScreen> {
                                         return Column(
                                           children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                                              child: Row(children: <Widget>[
+                                              padding: const EdgeInsets.only(left: 16),
+                                              child: Row(
+                                                children: <Widget>[
                                                 Flexible(
                                                     flex: 0,
                                                     child: Container(
                                                         width: MediaQuery.of(context).size.width * 0.4,
-                                                        padding: EdgeInsets.symmetric(horizontal: 4),
                                                         child: TextFormField(
                                                           controller: mName,
                                                           style: new TextStyle(
@@ -159,7 +160,6 @@ class _HomeScreen extends State<HomeScreen> {
                                                     flex: 0,
                                                     child: Container(
                                                         width: MediaQuery.of(context).size.width * 0.4,
-                                                        padding: EdgeInsets.symmetric(horizontal: 4),
                                                         child: TextFormField(
                                                           controller: mNumber,
                                                           style: new TextStyle(
@@ -175,17 +175,16 @@ class _HomeScreen extends State<HomeScreen> {
                                                     flex: 1,
                                                     child: Container(
                                                         alignment: Alignment.centerRight,
-                                                        // width: MediaQuery.of(context).size.width * 0.1,
                                                         child: IconButton(
-                                                          icon: Icon(Icons.check),
-                                                          color: Colors.green[300],
+                                                          icon: Icon(Icons.playlist_add),
+                                                          color: Colors.green,
                                                           onPressed: () {
                                                             return save(context);
                                                           },
                                                         )))
                                               ]),
                                             ),
-                                            Container(height: 130)
+                                            Container(height: 150)
                                           ],
                                         );
                                       }
@@ -196,11 +195,11 @@ class _HomeScreen extends State<HomeScreen> {
                         ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                             Center(
                                 child: Padding(
-                              padding: EdgeInsets.only(bottom: 8),
+                              padding: EdgeInsets.only(bottom: 24),
                               child: Container(
                                   child: ButtonTheme(
                                       minWidth: MediaQuery.of(context).size.width / 2,
-                                      height: 100,
+                                      height: 70,
                                       buttonColor: Colors.white,
                                       child: RaisedButton(
                                           elevation: 8,
@@ -209,7 +208,7 @@ class _HomeScreen extends State<HomeScreen> {
                                             return scan(context);
                                           },
                                           child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))))),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35))))),
                             )),
                           ])
                         : Container(),
@@ -347,6 +346,7 @@ class _HomeScreen extends State<HomeScreen> {
       await database.transaction((txn) async {
         await txn.rawInsert('INSERT INTO Items(name, number) VALUES("$name", "$number")');
       });
+      print(await database.rawQuery('SELECT * FROM Items'));
       setState(() {
         itemList.add(Item(name, number));
         if (alphabetical) {

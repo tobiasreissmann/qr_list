@@ -1,12 +1,17 @@
 name: qr_list
-description: A list for shopping in VG Dresden.
+description: A list for shopping with QR-Codes.
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: '>=2.0.0-dev.68.0 <3.0.0'
 
 dependencies:
+  path_provider: 0.4.1
+  barcode_scan: ^0.0.4
+  vibrate: any
+  sqflite: any
+  shared_preferences: any
   flutter:
     sdk: flutter
 
@@ -16,12 +21,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  path_provider: 0.4.1
-  barcode_scan: ^0.0.4
-  vibrate: any
-  sqflite: any
-  shared_preferences: any
-
 flutter:
-
   uses-material-design: true
