@@ -46,7 +46,7 @@ class _HomeScreen extends State<HomeScreen> {
           elevation: 0.0,
           title: Text(
             'QR-Shoppinglist',
-            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w300, fontSize: 24),
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
           ),
           actions: <Widget>[
             Container(
@@ -78,7 +78,7 @@ class _HomeScreen extends State<HomeScreen> {
                 icon: Icon(Icons.delete_sweep),
                 color: Colors.red[700],
                 onPressed: () {
-                  deleteItemList();
+                  return deleteItemList();
                 })
           ],
         ),
@@ -178,7 +178,7 @@ class _HomeScreen extends State<HomeScreen> {
                                                           icon: Icon(Icons.playlist_add),
                                                           color: Colors.green,
                                                           onPressed: () {
-                                                            return save(context);
+                                                            return manualAdd(context);
                                                           },
                                                         )))
                                               ]),
@@ -199,12 +199,12 @@ class _HomeScreen extends State<HomeScreen> {
                                   child: ButtonTheme(
                                       minWidth: MediaQuery.of(context).size.width / 2,
                                       height: 70,
-                                      buttonColor: Colors.white,
+                                      buttonColor: Colors.green,
                                       child: RaisedButton(
                                           elevation: 8,
-                                          textColor: Colors.green,
+                                          textColor: Colors.white,
                                           onPressed: () {
-                                            return scan(context);
+                                            return scanAdd(context);
                                           },
                                           child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35))))),
@@ -215,7 +215,7 @@ class _HomeScreen extends State<HomeScreen> {
                 )));
   }
 
-  Future scan(BuildContext context) async {
+  Future scanAdd(BuildContext context) async {
     try {
       Vibrate.feedback(FeedbackType.selection);
       String scan = await BarcodeScanner.scan();
@@ -270,7 +270,7 @@ class _HomeScreen extends State<HomeScreen> {
     return null;
   }
 
-  save(BuildContext context) async {
+  Future manualAdd(BuildContext context) async {
     setState(() => _ev++);
 
     if (mNumber.text == '' || mName.text == '') {
@@ -285,13 +285,18 @@ class _HomeScreen extends State<HomeScreen> {
           Vibrate.feedback(FeedbackType.error);
           return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This number is already taken.')));
         } else {
-          if (mName.text != '' && mNumber.text != '') {
-            var name = mName.text;
-            var number = mNumber.text;
-            await addItem(name, number);
-            mName.text = '';
-            mNumber.text = '';
-            _ev = 0;
+          if (itemList.where((item) => item.name == mName.text).toList().length > 0) {
+            Vibrate.feedback(FeedbackType.error);
+            return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item is already taken.')));
+          } else {
+            if (mName.text != '' && mNumber.text != '') {
+              var name = mName.text;
+              var number = mNumber.text;
+              await addItem(name, number);
+              mName.text = '';
+              mNumber.text = '';
+              _ev = 0;
+            }
           }
         }
         return null;
@@ -358,7 +363,6 @@ class _HomeScreen extends State<HomeScreen> {
     String path = join(await getDatabasesPath(), 'items.db');
     Database database = await openDatabase(path);
     await database.rawDelete('DELETE FROM Items WHERE number = "$number"');
-    getData();
   }
 }
 
