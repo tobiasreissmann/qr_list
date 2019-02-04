@@ -289,17 +289,14 @@ class _HomeScreen extends State<HomeScreen> {
             Vibrate.feedback(FeedbackType.error);
             return Scaffold.of(context).showSnackBar(SnackBar(content: Text('This item is already taken.')));
           } else {
-            if (mName.text != '' && mNumber.text != '') {
-              var name = mName.text;
-              var number = mNumber.text;
-              await addItem(name, number);
-              mName.text = '';
-              mNumber.text = '';
-              _ev = 0;
-            }
+            var name = mName.text;
+            var number = mNumber.text;
+            await addItem(name, number);
+            mName.text = '';
+            mNumber.text = '';
+            _ev = 0;
           }
         }
-        return null;
       }
     }
   }
