@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_list/gui/list.dart';
 
 main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white));
   runApp(new MyApp());
 }
 
