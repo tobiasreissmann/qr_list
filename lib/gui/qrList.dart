@@ -18,6 +18,8 @@ class QRList extends StatefulWidget {
 }
 
 class _QRList extends State<QRList> {
+  ScrollController _scrollController = new ScrollController();
+
   @override
   initState() {
     super.initState();
@@ -75,6 +77,7 @@ class _QRList extends State<QRList> {
                           color: Colors.white,
                           height: MediaQuery.of(context).size.height,
                           child: ListView.builder(
+                            controller: _scrollController,
                             itemCount: itemList.length + 1,
                             itemBuilder: (BuildContext context, int index) {
                               if (index < itemList.length) {
@@ -155,6 +158,7 @@ class _QRList extends State<QRList> {
       setState(() {
         itemList.add(Item(name, number));
       });
+      if(!alphabetical) _scrollController.jumpTo(_scrollController.position.maxScrollExtent+150);
       return successMessage(context);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) return errorMessage(context, 'To scan items the permisson for camera access is required.');
