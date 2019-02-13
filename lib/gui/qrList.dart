@@ -184,11 +184,13 @@ class _QRList extends State<QRList> {
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> errorMessage(BuildContext context, String errorText) {
     Vibrate.feedback(FeedbackType.error);
+    Scaffold.of(context).removeCurrentSnackBar();
     return Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorText)));
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> successMessage(BuildContext context) {
     Vibrate.feedback(FeedbackType.light);
+    Scaffold.of(context).removeCurrentSnackBar();
     return Scaffold.of(context).showSnackBar(SnackBar(content: Text('Item added successfully.')));
   }
 
