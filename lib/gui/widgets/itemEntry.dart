@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_list/globals.dart';
-import 'package:qr_list/models.dart';
+import 'package:qr_list/models/item.dart';
 
 class ItemEntry extends StatelessWidget {
   ItemEntry({@required this.index});

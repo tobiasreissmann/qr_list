@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/models.dart';
+
+import 'package:qr_list/models/item.dart';
 
 List<Item> itemList = [];
 

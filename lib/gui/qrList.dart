@@ -2,12 +2,15 @@ import 'dart:async';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_list/services/data.service.dart';
-import 'package:qr_list/globals.dart';
-import 'package:qr_list/gui/item.dart';
-import 'package:qr_list/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibrate/vibrate.dart';
+
+import 'package:qr_list/globals.dart';
+import 'package:qr_list/gui/widgets/itemEntry.dart';
+import 'package:qr_list/gui/widgets/manualItemAdd.dart';
+import 'package:qr_list/gui/widgets/scan.dart';
+import 'package:qr_list/models/item.dart';
+import 'package:qr_list/services/data.service.dart';
 
 class QRList extends StatefulWidget {
   @override
@@ -86,58 +89,10 @@ class _QRList extends State<QRList> {
                               } else {
                                 return Column(
                                   children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 16),
-                                      child: Row(children: <Widget>[
-                                        Flexible(
-                                          flex: 0,
-                                          child: Container(
-                                            width: MediaQuery.of(context).size.width * 0.4,
-                                            child: TextFormField(
-                                              controller: mName,
-                                              style: new TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                              ),
-                                              keyboardType: TextInputType.text,
-                                              decoration: const InputDecoration(
-                                                labelText: 'Item',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-                                        Flexible(
-                                          flex: 0,
-                                          child: Container(
-                                            width: MediaQuery.of(context).size.width * 0.4,
-                                            child: TextFormField(
-                                              controller: mNumber,
-                                              style: new TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                              ),
-                                              keyboardType: TextInputType.number,
-                                              decoration: const InputDecoration(
-                                                labelText: 'Number',
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Flexible(
-                                          flex: 1,
-                                          child: Container(
-                                            alignment: Alignment.centerRight,
-                                            child: IconButton(
-                                              icon: Icon(Icons.playlist_add),
-                                              color: Colors.green,
-                                              onPressed: () {
-                                                manualAdd(context);
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ]),
+                                    ManualItemAdd(
+                                      onSubmitted: () {
+                                        return manualAdd(context);
+                                      },
                                     ),
                                     Container(height: 150)
                                   ],
@@ -151,26 +106,12 @@ class _QRList extends State<QRList> {
                 MediaQuery.of(context).viewInsets.bottom == 0.0
                     ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                         Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 24),
-                            child: Container(
-                              child: ButtonTheme(
-                                minWidth: MediaQuery.of(context).size.width / 2,
-                                height: 70,
-                                buttonColor: Colors.green,
-                                child: RaisedButton(
-                                  elevation: 8,
-                                  textColor: Colors.white,
-                                  onPressed: () {
-                                    Vibrate.feedback(FeedbackType.selection);
-                                    return scanItem(context);
-                                  },
-                                  child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: ScanButton(
+                            onSubmitted: () {
+                              Vibrate.feedback(FeedbackType.selection);
+                              return scanItem(context);
+                            }
+                          )
                         ),
                       ])
                     : Container(),

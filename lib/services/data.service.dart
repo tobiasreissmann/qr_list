@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
-import 'package:qr_list/models.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'package:qr_list/models/item.dart';
 
 Future<Database> getDatabase() async {
   String path = join(await getDatabasesPath(), 'items.db');
