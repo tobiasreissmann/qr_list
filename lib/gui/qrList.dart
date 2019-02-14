@@ -8,7 +8,7 @@ import 'package:vibrate/vibrate.dart';
 import 'package:qr_list/globals.dart';
 import 'package:qr_list/gui/widgets/itemEntry.dart';
 import 'package:qr_list/gui/widgets/manualItemAdd.dart';
-import 'package:qr_list/gui/widgets/scan.dart';
+import 'package:qr_list/gui/widgets/scanButton.dart';
 import 'package:qr_list/models/item.dart';
 import 'package:qr_list/services/data.service.dart';
 
