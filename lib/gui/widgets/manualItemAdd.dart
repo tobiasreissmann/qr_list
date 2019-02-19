@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:qr_list/gui/qrList.dart';
+import 'package:qr_list/models/item.dart';
+import 'package:vibrate/vibrate.dart';
 
-import 'package:qr_list/globals.dart';
+class ManualItemAdd extends StatefulWidget {
+  @override
+  _ManualItemAddState createState() {
+    return new _ManualItemAddState();
+  }
+}
 
-class ManualItemAdd extends StatelessWidget {
-  const ManualItemAdd({@required this.onSubmitted});
+class _ManualItemAddState extends State<ManualItemAdd> {
+  TextEditingController _nameController = new TextEditingController();
 
-  final VoidCallback onSubmitted;
+  TextEditingController _numberController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +25,7 @@ class ManualItemAdd extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
-              controller: mName,
+              controller: _nameController,
               style: new TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -35,7 +43,7 @@ class ManualItemAdd extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
-              controller: mNumber,
+              controller: _numberController,
               style: new TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -54,11 +62,41 @@ class ManualItemAdd extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.playlist_add),
               color: Colors.green,
-              onPressed: onSubmitted,
+              onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
             ),
           ),
         ),
       ]),
     );
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
+    final _bloc = MyInherited.of(context).bloc;
+    switch (_bloc.validateItem(item)) {
+      case 0:
+        return _sendFeedbackMessage(context, FeedbackType.error, 'There are fields left that need to be filled.');
+      case 1:
+        return _sendFeedbackMessage(context, FeedbackType.error, 'The list already contains this item.');
+      case 2:
+        return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.');
+      case 3:
+        _addItemToItemList(context, item);
+        return _sendFeedbackMessage(context, FeedbackType.light, 'Item added successfully.');
+      default:
+        return _sendFeedbackMessage(context, FeedbackType.light, 'There was an issue.');
+    }
+  }
+
+  void _addItemToItemList(BuildContext context, Item item) {
+    MyInherited.of(context).bloc.addItemSink.add(item);
+    _nameController.text = '';
+    _numberController.text = '';
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
+      BuildContext context, FeedbackType feedbacktype, String feedbackMessage) {
+    Vibrate.feedback(feedbacktype);
+    Scaffold.of(context).removeCurrentSnackBar();
+    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(feedbackMessage)));
   }
 }
