@@ -36,7 +36,7 @@ class ItemEntryState extends State<ItemEntry> {
               fit: FlexFit.tight,
               child: Container(
                 alignment: Alignment.centerRight,
-                child: Text(widget.item.number, style: TextStyle(fontSize: 26.0), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left),
+                child: Text(widget.item.number, style: TextStyle(fontSize: 28.0), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left),
               ),
             ),
           ]),

@@ -37,7 +37,7 @@ class ScanButton extends StatelessWidget {
   }
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> _readCode(BuildContext context) async {
-    Vibrate.feedback(FeedbackType.light);
+    Vibrate.feedback(FeedbackType.impact);
     try {
       // get scan
       final String scan = await BarcodeScanner.scan();
@@ -53,11 +53,11 @@ class ScanButton extends StatelessWidget {
       final _bloc = BlocProvider.of(context).bloc;
       switch (_bloc.validateItem(item)) {
         case 0:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'There was a recognizing the item.', 3);
+          return _sendFeedbackMessage(context, FeedbackType.warning, 'There was a recognizing the item.', 3);
         case 1:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'This item was already scanned.', 3);
+          return _sendFeedbackMessage(context, FeedbackType.warning, 'This item was already scanned.', 3);
         case 2:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.', 3);
+          return _sendFeedbackMessage(context, FeedbackType.warning, 'This number is already taken.', 3);
         case 3:
           // no problems -> add item to itemList
           _addItemToItemList(context, item);
@@ -69,7 +69,7 @@ class ScanButton extends StatelessWidget {
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied)
-        return _sendFeedbackMessage(context, FeedbackType.error, 'No camera access permission provided.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, 'No camera access permission provided.', 3);
     }
     return _sendFeedbackMessage(context, FeedbackType.error, 'There was a problem scanning the code.', 3);
   }

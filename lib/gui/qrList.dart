@@ -45,64 +45,67 @@ class _QRList extends State<QRList> {
 
   Widget build(BuildContext context) {
     final _bloc = BlocProvider.of(context).bloc;
-    return Scaffold(
-      key: _key,
-      appBar: AppBar(
-        brightness: Brightness.light,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          'QR-Shoppinglist',
-          style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
+    return GestureDetector(
+      onTap: () => _key.currentState.removeCurrentSnackBar(),
+      child: Scaffold(
+        key: _key,
+        appBar: AppBar(
+          brightness: Brightness.light,
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Text(
+            'QR-Shoppinglist',
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
+          ),
+          actions: <Widget>[
+            StreamBuilder(
+              stream: _bloc.alphabeticalStream,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return IconButton(
+                  icon: Icon(Icons.sort_by_alpha),
+                  color: snapshot.data ? Colors.green : Colors.grey,
+                  onPressed: () {
+                    _toggleAlphabetical(context);
+                  },
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_sweep),
+              color: Colors.red[700],
+              onPressed: () => _deleteItemList(context),
+            ),
+          ],
         ),
-        actions: <Widget>[
-          StreamBuilder(
-            stream: _bloc.alphabeticalStream,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return IconButton(
-                icon: Icon(Icons.sort_by_alpha),
-                color: snapshot.data ? Colors.green : Colors.grey,
-                onPressed: () {
-                  _toggleAlphabetical(context);
-                },
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_sweep),
-            color: Colors.red[700],
-            onPressed: () => _deleteItemList(context),
-          ),
-        ],
-      ),
-      body: Builder(
-        builder: (context) => Stack(
-              children: <Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          child: StreamBuilder(
-                            stream: _bloc.itemListStream,
-                            builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-                              return ListView(
-                                children: (snapshot.hasData
-                                    ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
-                                    : [_buildPlaceholer(0)].toList()
-                                  ..addAll([ManualItemAdd(), _buildPlaceholer(300)].toList())),
-                                controller: _listScrollController,
-                              );
-                            },
+        body: Builder(
+          builder: (context) => Stack(
+                children: <Widget>[
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: StreamBuilder(
+                              stream: _bloc.itemListStream,
+                              builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+                                return ListView(
+                                  children: (snapshot.hasData
+                                      ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
+                                      : [_buildPlaceholer(0)].toList()
+                                    ..addAll([ManualItemAdd(), _buildPlaceholer(300)].toList())),
+                                  controller: _listScrollController,
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ]),
-                MediaQuery.of(context).viewInsets.bottom > 0 ? _buildPlaceholer(0) : ScanButton(scrollController: _listScrollController),
-              ],
-            ),
+                      ]),
+                  MediaQuery.of(context).viewInsets.bottom > 0 ? _buildPlaceholer(0) : ScanButton(scrollController: _listScrollController),
+                ],
+              ),
+        ),
       ),
     );
   }

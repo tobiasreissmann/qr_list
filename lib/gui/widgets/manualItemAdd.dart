@@ -13,6 +13,8 @@ class ManualItemAdd extends StatefulWidget {
 class _ManualItemAddState extends State<ManualItemAdd> {
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _numberController = new TextEditingController();
+  FocusNode _nameFocusNode = new FocusNode();
+  FocusNode _numberFocusNode = new FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,12 @@ class _ManualItemAddState extends State<ManualItemAdd> {
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
               controller: _nameController,
+              focusNode: _nameFocusNode,
+              onFieldSubmitted: (string) {
+                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                _confirmItem(context, Item(_nameController.text, _numberController.text));
+              },
               style: new TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -43,6 +51,12 @@ class _ManualItemAddState extends State<ManualItemAdd> {
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
               controller: _numberController,
+              focusNode: _numberFocusNode,
+              onFieldSubmitted: (string) {
+                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                _confirmItem(context, Item(_nameController.text, _numberController.text));
+              },
               style: new TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -73,14 +87,14 @@ class _ManualItemAddState extends State<ManualItemAdd> {
     final _bloc = BlocProvider.of(context).bloc;
     switch (_bloc.validateItem(item)) {
       case 0:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'There are fields left that need to be filled.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, 'There are fields left that need to be filled.', 3);
       case 1:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'The list already contains this item.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, 'The list already contains this item.', 3);
       case 2:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, 'This number is already taken.', 3);
       case 3:
         _addItemToItemList(context, item);
-        return _sendFeedbackMessage(context, FeedbackType.light, 'Item "${item.name}" added successfully.', 1);
+        return _sendFeedbackMessage(context, null, 'Item "${item.name}" added successfully.', 1);
       default:
         return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.', 3);
     }
