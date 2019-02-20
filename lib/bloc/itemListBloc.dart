@@ -1,8 +1,9 @@
 import 'dart:async';
-
-import 'package:qr_list/models/item.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:qr_list/models/item.dart';
+import 'package:qr_list/services/database.service.dart';
 
 class ItemListBloc {
   bool _alphabetical = false;
@@ -10,16 +11,27 @@ class ItemListBloc {
   List<Item> _itemList = [];
   List<Item> _backupItemList = [];
 
+  void dispose() {
+    _itemListController.close();
+    _addItemController.close();
+    _deleteItemController.close();
+    _spreadAlphabeticalController.close();
+  }
+
+  // stream to publish the itemList
   final _itemListController = BehaviorSubject<List<Item>>();
   StreamSink<List<Item>> get _inItemListSink => _itemListController.sink;
   Stream<List<Item>> get itemListStream => _itemListController.stream;
 
+  // stream to add item
   final _addItemController = StreamController<Item>();
   StreamSink<Item> get addItemSink => _addItemController.sink;
 
+  // stream to delete item
   final _deleteItemController = StreamController<String>();
   StreamSink<String> get deleteItemSink => _deleteItemController.sink;
 
+  // stream to publish alphabetical
   final _spreadAlphabeticalController = BehaviorSubject<bool>();
   StreamSink<bool> get _inAlphabeticalSink => _spreadAlphabeticalController.sink;
   Stream<bool> get alphabeticalStream => _spreadAlphabeticalController.stream;
@@ -29,34 +41,38 @@ class ItemListBloc {
     _inAlphabeticalSink.add(_alphabetical);
     _getData();
 
-    _addItemController.stream.listen(_mapItemToItemList);
-    _deleteItemController.stream.listen(_removeItemFromList);
+    _addItemController.stream.listen(_addItemToItemList);
+    _deleteItemController.stream.listen(_removeItemFromItemList);
   }
 
-  void _mapItemToItemList(Item item) {
+  void _addItemToItemList(Item item) {
     _itemList.add(item);
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    databaseDeleteItem(item);
   }
 
-  void _removeItemFromList(String number) {
+  void _removeItemFromItemList(String number) {
     _backupItemList = _itemList;
     _itemList = _itemList.where((_item) => _item.number != number).toList();
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    databaseRemoveItem(number);
   }
 
   void toggleAlphabetical() {
     _alphabetical = !_alphabetical;
     _inAlphabeticalSink.add(_alphabetical);
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
-    _saveData();
+    _saveSettings();
   }
 
   void deleteItemList() {
     _backupItemList = _itemList;
     _itemList = [];
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    databaseDeleteTable();
   }
 
+  // for undo functionality
   void revertItemList() {
     _itemList = _backupItemList;
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
@@ -81,23 +97,20 @@ class ItemListBloc {
     return 3;
   }
 
-  void _saveData() async {
+  void _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('alphabetical', _alphabetical);
   }
 
   void _getData() async {
+    // getting settings
     final prefs = await SharedPreferences.getInstance();
     _alphabetical = prefs.getBool('alphabetical') ?? false;
     _inAlphabeticalSink.add(_alphabetical);
+
+    // getting data
+    _itemList = await databaseItemList;
+
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
-
-  }
-
-  void dispose() {
-    _itemListController.close();
-    _addItemController.close();
-    _deleteItemController.close();
-    _spreadAlphabeticalController.close();
   }
 }

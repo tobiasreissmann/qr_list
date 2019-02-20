@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vibrate/vibrate.dart';
+
 import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/models/item.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ManualItemAdd extends StatefulWidget {
   @override

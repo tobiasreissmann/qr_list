@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:vibrate/vibrate.dart';
+
 import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/models/item.dart';
-import 'package:vibrate/vibrate.dart';
-import 'package:flutter/services.dart';
 
 class ScanButton extends StatelessWidget {
   ScanButton({@required this.scrollController});
