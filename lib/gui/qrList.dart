@@ -94,18 +94,15 @@ class _QRList extends State<QRList> {
                           child: StreamBuilder(
                             stream: _bloc.itemListStream,
                             builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-                              if (!snapshot.hasData)
-                                return SizedBox();
-                              else
-                                return ListView(
-                                  children: snapshot.data.map((item) => _buildItemEntry(context, item)).toList(),
-                                  controller: _listScrollController,
-                                );
+                              return ListView(
+                                children: (snapshot.hasData ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList()) : null
+                                  ..addAll([ManualItemAdd()].toList())),
+                                controller: _listScrollController,
+                              );
                             },
                           ),
                         ),
                       ),
-                      ManualItemAdd(),
                     ]),
                 // MediaQuery.of(context).viewInsets.bottom == 0.0
                 //     ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
