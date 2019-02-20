@@ -82,7 +82,7 @@ class _ManualItemAddState extends State<ManualItemAdd> {
         _addItemToItemList(context, item);
         return _sendFeedbackMessage(context, FeedbackType.light, 'Item added successfully.');
       default:
-        return _sendFeedbackMessage(context, FeedbackType.light, 'There was an issue.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.');
     }
   }
 

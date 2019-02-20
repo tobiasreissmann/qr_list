@@ -24,6 +24,7 @@ class ItemListBloc {
 
   void _mapItemToItemList(Item item) {
     _itemList.add(item);
+    _itemList.sort((a, b) => a.name.compareTo(b.name));
     _inItemListSink.add(_itemList);
   }
 

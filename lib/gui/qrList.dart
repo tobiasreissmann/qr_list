@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_list/itemListBloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:qr_list/globals.dart';
 import 'package:qr_list/gui/widgets/itemEntry.dart';
 import 'package:qr_list/gui/widgets/manualItemAdd.dart';
 import 'package:qr_list/gui/widgets/scanButton.dart';
 import 'package:qr_list/models/item.dart';
-import 'package:qr_list/services/data.service.dart';
 import 'package:vibrate/vibrate.dart';
 
 class BlocProvider extends InheritedWidget {
@@ -39,13 +36,6 @@ class QRList extends StatefulWidget {
 class _QRList extends State<QRList> {
   final _key = GlobalKey<ScaffoldState>();
   ScrollController _listScrollController = new ScrollController();
-
-  @override
-  initState() {
-    super.initState();
-    // readSetting();
-    // getData();
-  }
 
   @override
   dispose() {
@@ -95,8 +85,10 @@ class _QRList extends State<QRList> {
                             stream: _bloc.itemListStream,
                             builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
                               return ListView(
-                                children: (snapshot.hasData ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList()) : null
-                                  ..addAll([ManualItemAdd()].toList())),
+                                children: (snapshot.hasData
+                                    ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
+                                    : [_buildPlaceholer(0)].toList()
+                                  ..addAll([ManualItemAdd(), _buildPlaceholer(300)].toList())),
                                 controller: _listScrollController,
                               );
                             },
@@ -104,18 +96,7 @@ class _QRList extends State<QRList> {
                         ),
                       ),
                     ]),
-                // MediaQuery.of(context).viewInsets.bottom == 0.0
-                //     ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                //         Center(
-                //           child: ScanButton(
-                //             onSubmitted: () {
-                //               Vibrate.feedback(FeedbackType.selection);
-                //               return scanItem(context);
-                //             }
-                //           )
-                //         ),
-                //       ])
-                //     : Container(),
+                MediaQuery.of(context).viewInsets.bottom > 0 ? _buildPlaceholer(0) : ScanButton(scrollController: _listScrollController),
               ],
             ),
       ),
@@ -132,14 +113,20 @@ class _QRList extends State<QRList> {
     );
   }
 
+  Widget _buildPlaceholer(double height) {
+    return SizedBox(
+      height: height,
+    );
+  }
+
   void _deleteItem(BuildContext context, Item item) {
     BlocProvider.of(context).bloc.deleteItemSink.add(item.number);
-    _sendDeleteFeedbackMessage(context, 'Item ${item.name} was deleted.');
+    _sendDeleteFeedbackMessage(context, 'Item ${item.name} deleted.');
   }
 
   void _deleteItemList(BuildContext context) {
     BlocProvider.of(context).bloc.deleteItemList();
-    _sendDeleteFeedbackMessage(context, 'Items were deleted.');
+    _sendDeleteFeedbackMessage(context, 'Items deleted.');
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {

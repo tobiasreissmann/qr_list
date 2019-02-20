@@ -1,71 +1,102 @@
 import 'package:flutter/material.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:qr_list/gui/qrList.dart';
+import 'package:qr_list/models/item.dart';
+import 'package:vibrate/vibrate.dart';
+import 'package:flutter/services.dart';
 
 class ScanButton extends StatelessWidget {
-  const ScanButton({@required this.onSubmitted});
-
-  final VoidCallback onSubmitted;
+  ScanButton({@required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 24),
-      child: Container(
-        child: ButtonTheme(
-          minWidth: MediaQuery.of(context).size.width / 2,
-          height: 70,
-          buttonColor: Colors.green,
-          child: RaisedButton(
-            elevation: 8,
-            textColor: Colors.white,
-            onPressed: onSubmitted,
-            child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+    return Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+      Center(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 24),
+          child: Container(
+            child: ButtonTheme(
+              minWidth: MediaQuery.of(context).size.width / 2,
+              height: 70,
+              buttonColor: Colors.green,
+              child: RaisedButton(
+                elevation: 8,
+                textColor: Colors.white,
+                onPressed: () {
+                  return _readCode(context);
+                },
+                child: const Text('SCAN', style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+              ),
+            ),
           ),
         ),
       ),
-    );
+    ]);
   }
 
-  // Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> scanItem(BuildContext context) async {
-  //   try {
-  //     // get scan
-  //     final String scan = await BarcodeScanner.scan();
+  Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> _readCode(BuildContext context) async {
+    try {
+      // get scan
+      final String scan = await BarcodeScanner.scan();
 
-  //     // define regex for validation checks
-  //     final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
-  //     final RegExp expNumber = new RegExp(r"([0-9])\w+");
-  //     final RegExp expNameKg = new RegExp(r"^.*\skg\s");
-  //     final RegExp expNameBund = new RegExp(r"^.*\sBund\s");
-  //     final RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
+      // check if scan is of invalid format
+      final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
+      if (!expScan.hasMatch(scan)) return _sendFeedbackMessage(context, FeedbackType.error, 'This barcode / qr-code is not supported');
 
-  //     String name = '';
-  //     String number = expNumber.stringMatch(scan);
+      // get item from scan
+      final item = _readItemFromScan(scan);
 
-  //     // check if scan is of valid format
-  //     if (!expScan.hasMatch(scan)) return errorMessage(context, 'This barcode / qr-code is not supported');
+      // check item validitys
+      final _bloc = BlocProvider.of(context).bloc;
+      switch (_bloc.validateItem(item)) {
+        case 0:
+          return _sendFeedbackMessage(context, FeedbackType.error, 'There was a recognizing the item.');
+        case 1:
+          return _sendFeedbackMessage(context, FeedbackType.error, 'This item was already scanned.');
+        case 2:
+          return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.');
+        case 3:
+          // no problems -> add item to itemList
+          _addItemToItemList(context, item);
+          // scroll to list.bottom // TODO only when alphabetical
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          return _sendFeedbackMessage(context, FeedbackType.light, 'Item added successfully.');
+      }
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.CameraAccessDenied)
+        return _sendFeedbackMessage(context, FeedbackType.error, 'No camera access permission provided.');
+    }
+    return _sendFeedbackMessage(context, FeedbackType.error, 'There was a problem scanning the code.');
+  }
 
-  //     // find item type
-  //     if (expNameKg.hasMatch(scan)) name = scan.split(" kg ")[1];
-  //     if (expNameBund.hasMatch(scan)) name = scan.split(" Bund ")[1];
-  //     if (expNameStueck.hasMatch(scan)) name = scan.split(" Stück ")[1];
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
+      BuildContext context, FeedbackType feedbacktype, String feedbackMessage) {
+    Vibrate.feedback(feedbacktype);
+    Scaffold.of(context).removeCurrentSnackBar();
+    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(feedbackMessage)));
+  }
 
-  //     // check whether there was a valid name found
-  //     if (name == '') return errorMessage(context, 'There was a problem recognizing the item.');
-  //     if (itemList.where((item) => item.name == name && item.number == number).toList().length > 0)
-  //       return errorMessage(context, 'This item was already scanned.');
-  //     if (itemList.where((item) => item.number == number).toList().length > 0) return errorMessage(context, 'This number is already taken.');
+  Item _readItemFromScan(String scan) {
+    // define regex for validation checks
+    final RegExp expNumber = new RegExp(r"([0-9])\w+");
+    final RegExp expNameKg = new RegExp(r"^.*\skg\s");
+    final RegExp expNameBund = new RegExp(r"^.*\sBund\s");
+    final RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
 
-  //     // no problems -> add Item
-  //     await addDatabaseItem(name, number);
-  //     setState(() {
-  //       itemList.add(Item(name, number));
-  //     });
-  //     if(!alphabetical) _scrollController.jumpTo(_scrollController.position.maxScrollExtent+150);
-  //     return successMessage(context);
-  //   } on PlatformException catch (e) {
-  //     if (e.code == BarcodeScanner.CameraAccessDenied) return errorMessage(context, 'To scan items the permisson for camera access is required.');
-  //   }
-  //   return errorMessage(context, 'There was an undefined problem.');
-  // }
+    String name;
+    String number = expNumber.stringMatch(scan);
 
+    // find item name (differences between diffrent item types)
+    if (expNameKg.hasMatch(scan)) name = scan.split(" kg ")[1];
+    if (expNameBund.hasMatch(scan)) name = scan.split(" Bund ")[1];
+    if (expNameStueck.hasMatch(scan)) name = scan.split(" Stück ")[1];
+
+    return Item(name, number);
+  }
+
+  void _addItemToItemList(BuildContext context, Item item) {
+    BlocProvider.of(context).bloc.addItemSink.add(item);
+  }
 }
