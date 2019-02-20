@@ -6,7 +6,6 @@ import 'package:qr_list/gui/widgets/itemEntry.dart';
 import 'package:qr_list/gui/widgets/manualItemAdd.dart';
 import 'package:qr_list/gui/widgets/scanButton.dart';
 import 'package:qr_list/models/item.dart';
-import 'package:qr_list/models/sinkEvent.dart';
 import 'package:vibrate/vibrate.dart';
 
 class BlocProvider extends InheritedWidget {
@@ -135,7 +134,7 @@ class _QRList extends State<QRList> {
   }
 
   _toggleAlphabetical(BuildContext context) {
-    BlocProvider.of(context).bloc.toogleAlphabeticalSink.add(SinkEvent());
+    BlocProvider.of(context).bloc.toggleAlphabetical();
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:qr_list/models/item.dart';
-import 'package:qr_list/models/sinkEvent.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ItemListBloc {
@@ -20,9 +19,6 @@ class ItemListBloc {
   final _deleteItemController = StreamController<String>();
   StreamSink<String> get deleteItemSink => _deleteItemController.sink;
 
-  final _toogleAlphabeticalController = StreamController<SinkEvent>();
-  StreamSink<SinkEvent> get toogleAlphabeticalSink => _toogleAlphabeticalController.sink;
-
   final _spreadAlphabeticalController = BehaviorSubject<bool>();
   StreamSink<bool> get _inAlphabeticalSink => _spreadAlphabeticalController.sink;
   Stream<bool> get alphabeticalStream => _spreadAlphabeticalController.stream;
@@ -33,7 +29,6 @@ class ItemListBloc {
 
     _addItemController.stream.listen(_mapItemToItemList);
     _deleteItemController.stream.listen(_removeItemFromList);
-    _toogleAlphabeticalController.stream.listen(_toggleAlphabetical);
   }
 
   void _mapItemToItemList(Item item) {
@@ -47,7 +42,7 @@ class ItemListBloc {
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
   }
 
-  void _toggleAlphabetical(SinkEvent event) {
+  void toggleAlphabetical() {
     _alphabetical = !_alphabetical;
     _inAlphabeticalSink.add(_alphabetical);
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
@@ -87,7 +82,6 @@ class ItemListBloc {
     _itemListController.close();
     _addItemController.close();
     _deleteItemController.close();
-    _toogleAlphabeticalController.close();
     _spreadAlphabeticalController.close();
   }
 }
