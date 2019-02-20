@@ -91,9 +91,7 @@ class _QRList extends State<QRList> {
                               stream: _bloc.itemListStream,
                               builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
                                 return ListView(
-                                  children: (snapshot.hasData
-                                      ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
-                                      : [_buildPlaceholer(0)].toList()
+                                  children: (snapshot.data.map((item) => _buildItemEntry(context, item)).toList()
                                     ..addAll([ManualItemAdd(), _buildPlaceholer(300)].toList())),
                                   controller: _listScrollController,
                                 );
