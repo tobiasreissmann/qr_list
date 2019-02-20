@@ -33,6 +33,12 @@ class ItemListBloc {
     _inItemListSink.add(_itemList);
   }
 
+  void deleteItemList() {
+    _backupItemList = _itemList;
+    _itemList = [];
+    _inItemListSink.add(_itemList);
+  }
+
   void revertItemList() {
     _itemList = _backupItemList;
     _inItemListSink.add(_itemList);

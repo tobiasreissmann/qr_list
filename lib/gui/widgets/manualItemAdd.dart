@@ -12,7 +12,6 @@ class ManualItemAdd extends StatefulWidget {
 
 class _ManualItemAddState extends State<ManualItemAdd> {
   TextEditingController _nameController = new TextEditingController();
-
   TextEditingController _numberController = new TextEditingController();
 
   @override
@@ -71,7 +70,7 @@ class _ManualItemAddState extends State<ManualItemAdd> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    final _bloc = MyInherited.of(context).bloc;
+    final _bloc = BlocProvider.of(context).bloc;
     switch (_bloc.validateItem(item)) {
       case 0:
         return _sendFeedbackMessage(context, FeedbackType.error, 'There are fields left that need to be filled.');
@@ -88,9 +87,9 @@ class _ManualItemAddState extends State<ManualItemAdd> {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    MyInherited.of(context).bloc.addItemSink.add(item);
-    _nameController.text = '';
-    _numberController.text = '';
+    BlocProvider.of(context).bloc.addItemSink.add(item);
+    _nameController.clear();
+    _numberController.clear();
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(

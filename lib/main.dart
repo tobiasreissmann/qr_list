@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         textSelectionColor: Colors.green,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: MyInherited(
+      home: BlocProvider(
         child: QRList(),
       ),
     );
