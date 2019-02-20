@@ -4,7 +4,7 @@ import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListBloc.dart';
 import 'package:qr_list/gui/itemEntry.dart';
-import 'package:qr_list/gui/manualItemAdd.dart';
+import 'package:qr_list/gui/itemMask.dart';
 import 'package:qr_list/gui/scanButton.dart';
 import 'package:qr_list/models/item.dart';
 
@@ -94,7 +94,7 @@ class _QRList extends State<QRList> {
                                   children: (snapshot.hasData
                                     ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
                                     : [_buildPlaceholer(0)].toList()
-                                  ..addAll([ManualItemAdd(), _buildPlaceholer(300)].toList())),
+                                  ..addAll([ItemMask(), _buildPlaceholer(300)].toList())),
                                   controller: _listScrollController,
                                 );
                               },
@@ -157,12 +157,4 @@ class _QRList extends State<QRList> {
   void _undoDismissedItem(BuildContext context) {
     BlocProvider.of(context).bloc.revertItemList();
   }
-
-  // void getData() async {
-  //   List<Item> _itemList = await getDatabaseItems();
-  //   setState(() {
-  //     itemList = _itemList;
-  //     if (alphabetical) itemList.sort((a, b) => a.name.compareTo(b.name));
-  //   });
-  // }
 }

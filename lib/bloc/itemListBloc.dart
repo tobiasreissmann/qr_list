@@ -15,7 +15,7 @@ class ItemListBloc {
     _itemListController.close();
     _addItemController.close();
     _deleteItemController.close();
-    _spreadAlphabeticalController.close();
+    _alphabeticalController.close();
   }
 
   // stream to publish the itemList
@@ -32,14 +32,14 @@ class ItemListBloc {
   StreamSink<String> get deleteItemSink => _deleteItemController.sink;
 
   // stream to publish alphabetical
-  final _spreadAlphabeticalController = BehaviorSubject<bool>();
-  StreamSink<bool> get _inAlphabeticalSink => _spreadAlphabeticalController.sink;
-  Stream<bool> get alphabeticalStream => _spreadAlphabeticalController.stream;
+  final _alphabeticalController = BehaviorSubject<bool>();
+  StreamSink<bool> get _inAlphabeticalSink => _alphabeticalController.sink;
+  Stream<bool> get alphabeticalStream => _alphabeticalController.stream;
 
   ItemListBloc() {
     _inItemListSink.add(_itemList);
     _inAlphabeticalSink.add(_alphabetical);
-    _getData();
+    _loadData();
 
     _addItemController.stream.listen(_addItemToItemList);
     _deleteItemController.stream.listen(_removeItemFromItemList);
@@ -102,7 +102,7 @@ class ItemListBloc {
     prefs.setBool('alphabetical', _alphabetical);
   }
 
-  void _getData() async {
+  void _loadData() async {
     // getting settings
     final prefs = await SharedPreferences.getInstance();
     _alphabetical = prefs.getBool('alphabetical') ?? false;

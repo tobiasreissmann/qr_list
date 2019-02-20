@@ -4,14 +4,14 @@ import 'package:vibrate/vibrate.dart';
 import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/models/item.dart';
 
-class ManualItemAdd extends StatefulWidget {
+class ItemMask extends StatefulWidget {
   @override
-  _ManualItemAddState createState() {
-    return new _ManualItemAddState();
+  _ItemMaskState createState() {
+    return new _ItemMaskState();
   }
 }
 
-class _ManualItemAddState extends State<ManualItemAdd> {
+class _ItemMaskState extends State<ItemMask> {
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _numberController = new TextEditingController();
   FocusNode _nameFocusNode = new FocusNode();

@@ -2,17 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:qr_list/models/item.dart';
 
-class ItemEntry extends StatefulWidget {
+class ItemEntry extends StatelessWidget {
   ItemEntry({@required this.item});
   final Item item;
 
-  @override
-  ItemEntryState createState() {
-    return new ItemEntryState();
-  }
-}
-
-class ItemEntryState extends State<ItemEntry> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,7 +18,7 @@ class ItemEntryState extends State<ItemEntry> {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(
-                  widget.item.name,
+                  item.name,
                   style: TextStyle(fontSize: 20.0),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
@@ -36,7 +29,7 @@ class ItemEntryState extends State<ItemEntry> {
               fit: FlexFit.tight,
               child: Container(
                 alignment: Alignment.centerRight,
-                child: Text(widget.item.number, style: TextStyle(fontSize: 28.0), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left),
+                child: Text(item.number, style: TextStyle(fontSize: 28.0), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left),
               ),
             ),
           ]),
