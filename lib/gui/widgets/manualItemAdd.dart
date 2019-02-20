@@ -73,16 +73,16 @@ class _ManualItemAddState extends State<ManualItemAdd> {
     final _bloc = BlocProvider.of(context).bloc;
     switch (_bloc.validateItem(item)) {
       case 0:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'There are fields left that need to be filled.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'There are fields left that need to be filled.', 3);
       case 1:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'The list already contains this item.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'The list already contains this item.', 3);
       case 2:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.', 3);
       case 3:
         _addItemToItemList(context, item);
-        return _sendFeedbackMessage(context, FeedbackType.light, 'Item added successfully.');
+        return _sendFeedbackMessage(context, FeedbackType.light, 'Item "${item.name}" added successfully.', 1);
       default:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.', 3);
     }
   }
 
@@ -93,9 +93,12 @@ class _ManualItemAddState extends State<ManualItemAdd> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
-      BuildContext context, FeedbackType feedbacktype, String feedbackMessage) {
+      BuildContext context, FeedbackType feedbacktype, String feedbackMessage, int duration) {
     Vibrate.feedback(feedbacktype);
     Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(feedbackMessage)));
+    return Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(feedbackMessage),
+      duration: Duration(seconds: duration),
+    ));
   }
 }

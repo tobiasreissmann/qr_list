@@ -37,13 +37,14 @@ class ScanButton extends StatelessWidget {
   }
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> _readCode(BuildContext context) async {
+    Vibrate.feedback(FeedbackType.light);
     try {
       // get scan
       final String scan = await BarcodeScanner.scan();
 
       // check if scan is of invalid format
       final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
-      if (!expScan.hasMatch(scan)) return _sendFeedbackMessage(context, FeedbackType.error, 'This barcode / qr-code is not supported');
+      if (!expScan.hasMatch(scan)) return _sendFeedbackMessage(context, FeedbackType.error, 'This barcode / qr-code is not supported', 3);
 
       // get item from scan
       final item = _readItemFromScan(scan);
@@ -52,30 +53,33 @@ class ScanButton extends StatelessWidget {
       final _bloc = BlocProvider.of(context).bloc;
       switch (_bloc.validateItem(item)) {
         case 0:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'There was a recognizing the item.');
+          return _sendFeedbackMessage(context, FeedbackType.error, 'There was a recognizing the item.', 3);
         case 1:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'This item was already scanned.');
+          return _sendFeedbackMessage(context, FeedbackType.error, 'This item was already scanned.', 3);
         case 2:
-          return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.');
+          return _sendFeedbackMessage(context, FeedbackType.error, 'This number is already taken.', 3);
         case 3:
           // no problems -> add item to itemList
           _addItemToItemList(context, item);
-          // scroll to list.bottom // TODO only when alphabetical
-          scrollController.jumpTo(scrollController.position.maxScrollExtent);
-          return _sendFeedbackMessage(context, FeedbackType.light, 'Item added successfully.');
+          // scroll to bottom of list
+          _bloc.alphabeticalStream.listen((alphabetical) {
+            if (!alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          });
+          return _sendFeedbackMessage(context, FeedbackType.light, 'Item added "${item.name}" successfully.', 1);
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied)
-        return _sendFeedbackMessage(context, FeedbackType.error, 'No camera access permission provided.');
+        return _sendFeedbackMessage(context, FeedbackType.error, 'No camera access permission provided.', 3);
     }
-    return _sendFeedbackMessage(context, FeedbackType.error, 'There was a problem scanning the code.');
+    return _sendFeedbackMessage(context, FeedbackType.error, 'There was a problem scanning the code.', 3);
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
-      BuildContext context, FeedbackType feedbacktype, String feedbackMessage) {
+      BuildContext context, FeedbackType feedbacktype, String feedbackMessage, int duration) {
     Vibrate.feedback(feedbacktype);
     Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(feedbackMessage)));
+    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(feedbackMessage), 
+      duration: Duration(seconds: duration),));
   }
 
   Item _readItemFromScan(String scan) {

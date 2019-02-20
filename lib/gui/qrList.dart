@@ -6,6 +6,7 @@ import 'package:qr_list/gui/widgets/itemEntry.dart';
 import 'package:qr_list/gui/widgets/manualItemAdd.dart';
 import 'package:qr_list/gui/widgets/scanButton.dart';
 import 'package:qr_list/models/item.dart';
+import 'package:qr_list/models/sinkEvent.dart';
 import 'package:vibrate/vibrate.dart';
 
 class BlocProvider extends InheritedWidget {
@@ -56,14 +57,18 @@ class _QRList extends State<QRList> {
           style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
         ),
         actions: <Widget>[
-          // IconButton(
-          //     icon: Icon(Icons.sort_by_alpha),
-          //     color: alphabetical ? Colors.green : Colors.grey,
-          //     onPressed: () {
-          //       alphabetical = !alphabetical;
-          //       alphabetical ? alphabetize() : getData();
-          //       saveSetting();
-          //     }),
+          StreamBuilder(
+            stream: _bloc.alphabeticalStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return IconButton(
+                icon: Icon(Icons.sort_by_alpha),
+                color: snapshot.data ? Colors.green : Colors.grey,
+                onPressed: () {
+                  _toggleAlphabetical(context);
+                },
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.delete_sweep),
             color: Colors.red[700],
@@ -121,12 +126,16 @@ class _QRList extends State<QRList> {
 
   void _deleteItem(BuildContext context, Item item) {
     BlocProvider.of(context).bloc.deleteItemSink.add(item.number);
-    _sendDeleteFeedbackMessage(context, 'Item ${item.name} deleted.');
+    _sendDeleteFeedbackMessage(context, 'Item "${item.name}" deleted.');
   }
 
   void _deleteItemList(BuildContext context) {
     BlocProvider.of(context).bloc.deleteItemList();
     _sendDeleteFeedbackMessage(context, 'Items deleted.');
+  }
+
+  _toggleAlphabetical(BuildContext context) {
+    BlocProvider.of(context).bloc.toogleAlphabeticalSink.add(SinkEvent());
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
