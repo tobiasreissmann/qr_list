@@ -17,6 +17,15 @@ class _ManualItemAddState extends State<ManualItemAdd> {
   FocusNode _numberFocusNode = new FocusNode();
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _numberController.dispose();
+    _nameFocusNode.dispose();
+    _numberFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),

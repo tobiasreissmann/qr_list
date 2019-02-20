@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_list/itemListBloc.dart';
+import 'package:qr_list/bloc/itemListBloc.dart';
 
-import 'package:qr_list/gui/widgets/itemEntry.dart';
-import 'package:qr_list/gui/widgets/manualItemAdd.dart';
-import 'package:qr_list/gui/widgets/scanButton.dart';
+import 'package:qr_list/gui/itemEntry.dart';
+import 'package:qr_list/gui/manualItemAdd.dart';
+import 'package:qr_list/gui/scanButton.dart';
 import 'package:qr_list/models/item.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -39,8 +39,8 @@ class _QRList extends State<QRList> {
 
   @override
   dispose() {
-    super.dispose();
     BlocProvider.of(context).bloc.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -136,12 +136,12 @@ class _QRList extends State<QRList> {
     _sendDeleteFeedbackMessage(context, 'Items deleted.');
   }
 
-  _toggleAlphabetical(BuildContext context) {
+  void _toggleAlphabetical(BuildContext context) {
     BlocProvider.of(context).bloc.toggleAlphabetical();
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
-    Vibrate.feedback(FeedbackType.light);
+    Vibrate.feedback(FeedbackType.impact);
     _key.currentState.removeCurrentSnackBar();
     _key.currentState.showSnackBar(
       SnackBar(
@@ -164,18 +164,6 @@ class _QRList extends State<QRList> {
   //     itemList = _itemList;
   //     if (alphabetical) itemList.sort((a, b) => a.name.compareTo(b.name));
   //   });
-  // }
-
-  // void alphabetize() {
-  //   setState(() {
-  //     itemList.sort((a, b) => a.name.compareTo(b.name));
-  //   });
-  // }
-
-  // void saveSetting() async {
-  //   // save alphabetical setting
-  //   final prefs = await SharedPreferences.getInstance();
-  //   prefs.setBool('alphabetical', alphabetical);
   // }
 
   // void readSetting() async {
