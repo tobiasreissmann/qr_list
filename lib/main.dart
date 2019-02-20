@@ -20,8 +20,11 @@ class MyApp extends StatelessWidget {
         cursorColor: Colors.green,
         primaryColor: Colors.green,
         textSelectionColor: Colors.green,
+        scaffoldBackgroundColor: Colors.white,
       ),
-      home: QRList(),
+      home: BlocProvider(
+        child: QRList(),
+      ),
     );
   }
 }

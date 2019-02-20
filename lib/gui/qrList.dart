@@ -1,16 +1,32 @@
-import 'dart:async';
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibrate/vibrate.dart';
 
-import 'package:qr_list/globals.dart';
-import 'package:qr_list/gui/widgets/itemEntry.dart';
-import 'package:qr_list/gui/widgets/manualItemAdd.dart';
-import 'package:qr_list/gui/widgets/scanButton.dart';
+import 'package:qr_list/bloc/itemListBloc.dart';
+import 'package:qr_list/gui/itemEntry.dart';
+import 'package:qr_list/gui/itemMask.dart';
+import 'package:qr_list/gui/scanButton.dart';
 import 'package:qr_list/models/item.dart';
-import 'package:qr_list/services/data.service.dart';
+
+class BlocProvider extends InheritedWidget {
+  BlocProvider({
+    Key key,
+    @required this.child,
+  }) : super(key: key, child: child);
+
+  final Widget child;
+
+  final bloc = ItemListBloc();
+
+  static BlocProvider of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(BlocProvider) as BlocProvider;
+  }
+
+  @override
+  bool updateShouldNotify(BlocProvider oldWidget) {
+    return true;
+  }
+}
 
 class QRList extends StatefulWidget {
   @override
@@ -18,205 +34,127 @@ class QRList extends StatefulWidget {
 }
 
 class _QRList extends State<QRList> {
-  ScrollController _scrollController = new ScrollController();
-
-  @override
-  initState() {
-    super.initState();
-    readSetting();
-    getData();
-    mName = TextEditingController();
-    mNumber = TextEditingController();
-  }
+  final _key = GlobalKey<ScaffoldState>();
+  ScrollController _listScrollController = new ScrollController();
 
   @override
   dispose() {
-    mName.dispose();
-    mName.dispose();
+    BlocProvider.of(context).bloc.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        brightness: Brightness.light,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          'QR-Shoppinglist',
-          style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.sort_by_alpha),
-              color: alphabetical ? Colors.green : Colors.grey,
-              onPressed: () {
-                alphabetical = !alphabetical;
-                alphabetical ? alphabetize() : getData();
-                saveSetting();
-              }),
-          IconButton(
+    final _bloc = BlocProvider.of(context).bloc;
+    return GestureDetector(
+      onTap: () => _key.currentState.removeCurrentSnackBar(),
+      child: Scaffold(
+        key: _key,
+        appBar: AppBar(
+          brightness: Brightness.light,
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Text(
+            'QR-Shoppinglist',
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
+          ),
+          actions: <Widget>[
+            StreamBuilder(
+              stream: _bloc.alphabeticalStream,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                return IconButton(
+                  icon: Icon(Icons.sort_by_alpha),
+                  color: snapshot.hasData ? snapshot.data ? Colors.green : Colors.grey : Colors.grey,
+                  onPressed: () {
+                    _toggleAlphabetical(context);
+                  },
+                );
+              },
+            ),
+            IconButton(
               icon: Icon(Icons.delete_sweep),
               color: Colors.red[700],
-              onPressed: () {
-                deleteItemList();
-                getData();
-              }),
-        ],
-      ),
-      body: Builder(
-        builder: (context) => Stack(
-              children: <Widget>[
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: Colors.white,
-                          height: MediaQuery.of(context).size.height,
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: itemList.length + 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (index < itemList.length) {
-                                final item = itemList[index];
-                                return Dismissible(
-                                    key: Key(item.name),
-                                    onDismissed: (direction) {
-                                      removeItem(itemList[index].name, itemList[index].number);
-                                      setState(() => itemList.removeAt(index));
-                                    },
-                                    child: ItemEntry(index: index));
-                              } else {
-                                return Column(
-                                  children: <Widget>[
-                                    ManualItemAdd(
-                                      onSubmitted: () {
-                                        return manualAdd(context);
-                                      },
-                                    ),
-                                    Container(height: 150)
-                                  ],
+              onPressed: () => _deleteItemList(context),
+            ),
+          ],
+        ),
+        body: Builder(
+          builder: (context) => Stack(
+                children: <Widget>[
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: StreamBuilder(
+                              stream: _bloc.itemListStream,
+                              builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+                                return ListView(
+                                  children: (snapshot.hasData
+                                    ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
+                                    : [_buildPlaceholer(0)].toList()
+                                  ..addAll([ItemMask(), _buildPlaceholer(300)].toList())),
+                                  controller: _listScrollController,
                                 );
-                              }
-                            },
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ]),
-                MediaQuery.of(context).viewInsets.bottom == 0.0
-                    ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                        Center(
-                          child: ScanButton(
-                            onSubmitted: () {
-                              Vibrate.feedback(FeedbackType.selection);
-                              return scanItem(context);
-                            }
-                          )
-                        ),
-                      ])
-                    : Container(),
-              ],
-            ),
+                      ]),
+                  MediaQuery.of(context).viewInsets.bottom > 0 ? _buildPlaceholer(0) : ScanButton(scrollController: _listScrollController),
+                ],
+              ),
+        ),
       ),
     );
   }
 
-  Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> scanItem(BuildContext context) async {
-    try {
-      // get scan
-      final String scan = await BarcodeScanner.scan();
-
-      // define regex for validation checks
-      final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
-      final RegExp expNumber = new RegExp(r"([0-9])\w+");
-      final RegExp expNameKg = new RegExp(r"^.*\skg\s");
-      final RegExp expNameBund = new RegExp(r"^.*\sBund\s");
-      final RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
-
-      String name = '';
-      String number = expNumber.stringMatch(scan);
-
-      // check if scan is of valid format
-      if (!expScan.hasMatch(scan)) return errorMessage(context, 'This barcode / qr-code is not supported');
-
-      // find item type
-      if (expNameKg.hasMatch(scan)) name = scan.split(" kg ")[1];
-      if (expNameBund.hasMatch(scan)) name = scan.split(" Bund ")[1];
-      if (expNameStueck.hasMatch(scan)) name = scan.split(" Stück ")[1];
-
-      // check whether there was a valid name found
-      if (name == '') return errorMessage(context, 'There was a problem recognizing the item.');
-      if (itemList.where((item) => item.name == name && item.number == number).toList().length > 0)
-        return errorMessage(context, 'This item was already scanned.');
-      if (itemList.where((item) => item.number == number).toList().length > 0) return errorMessage(context, 'This number is already taken.');
-
-      // no problems -> add Item
-      await addDatabaseItem(name, number);
-      setState(() {
-        itemList.add(Item(name, number));
-      });
-      if(!alphabetical) _scrollController.jumpTo(_scrollController.position.maxScrollExtent+150);
-      return successMessage(context);
-    } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) return errorMessage(context, 'To scan items the permisson for camera access is required.');
-    }
-    return errorMessage(context, 'There was an undefined problem.');
+  Widget _buildItemEntry(BuildContext context, Item item) {
+    return Dismissible(
+      key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
+      onDismissed: (direction) => setState(() => _deleteItem(context, item)),
+      child: ItemEntry(
+        item: item,
+      ),
+    );
   }
 
-  Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> manualAdd(BuildContext context) async {
-    if (mNumber.text == '' || mName.text == '') return errorMessage(context, 'There are fields left that need to be filled.');
-    if (itemList.where((item) => item.name == mName.text && item.number == mNumber.text).toList().length > 0)
-      return errorMessage(context, 'The list already contains this item.');
-    if (itemList.where((item) => item.number == mNumber.text).toList().length > 0) return errorMessage(context, 'This number is already taken.');
-
-    // no problems -> add item to itemList
-    await addDatabaseItem(mName.text, mNumber.text);
-    setState(() {
-      itemList.add(Item(mName.text, mNumber.text));
-      mName.text = '';
-      mNumber.text = '';
-    });
-    return successMessage(context);
+  Widget _buildPlaceholer(double height) {
+    return SizedBox(
+      height: height,
+    );
   }
 
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> errorMessage(BuildContext context, String errorText) {
-    Vibrate.feedback(FeedbackType.error);
-    Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorText)));
+  void _deleteItem(BuildContext context, Item item) {
+    BlocProvider.of(context).bloc.deleteItemSink.add(item.number);
+    _sendDeleteFeedbackMessage(context, 'Item "${item.name}" deleted.');
   }
 
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> successMessage(BuildContext context) {
-    Vibrate.feedback(FeedbackType.light);
-    Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(content: Text('Item added successfully.')));
+  void _deleteItemList(BuildContext context) {
+    BlocProvider.of(context).bloc.deleteItemList();
+    _sendDeleteFeedbackMessage(context, 'Items deleted.');
   }
 
-  void getData() async {
-    List<Item> _itemList = await getDatabaseItems();
-    setState(() {
-      itemList = _itemList;
-      if (alphabetical) itemList.sort((a, b) => a.name.compareTo(b.name));
-    });
+  void _toggleAlphabetical(BuildContext context) {
+    BlocProvider.of(context).bloc.toggleAlphabetical();
   }
 
-  void alphabetize() {
-    setState(() {
-      itemList.sort((a, b) => a.name.compareTo(b.name));
-    });
+  void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
+    Vibrate.feedback(FeedbackType.impact);
+    _key.currentState.removeCurrentSnackBar();
+    _key.currentState.showSnackBar(
+      SnackBar(
+        content: Text(feedbackMessage),
+        action: new SnackBarAction(
+          label: 'UNDO',
+          onPressed: () => _undoDismissedItem(context),
+        ),
+      ),
+    );
   }
 
-  void saveSetting() async {
-    // save alphabetical setting
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('alphabetical', alphabetical);
-  }
-
-  void readSetting() async {
-    // get saved alphabetical setting
-    final prefs = await SharedPreferences.getInstance();
-    alphabetical = prefs.getBool('alphabetical') ?? false;
+  void _undoDismissedItem(BuildContext context) {
+    BlocProvider.of(context).bloc.revertItemList();
   }
 }
