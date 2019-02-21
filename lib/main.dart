@@ -5,10 +5,10 @@ import 'package:qr_list/gui/qrList.dart';
 
 main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white));
-  runApp(new MyApp());
+  runApp(new QRListApp());
 }
 
-class MyApp extends StatelessWidget {
+class QRListApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         textSelectionColor: Colors.green,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: BlocProvider(
+      home: ItemListProvider(
         child: QRList(),
       ),
     );

@@ -9,8 +9,8 @@ import 'package:qr_list/gui/itemMask.dart';
 import 'package:qr_list/gui/scanButton.dart';
 import 'package:qr_list/models/item.dart';
 
-class BlocProvider extends InheritedWidget {
-  BlocProvider({
+class ItemListProvider extends InheritedWidget {
+  ItemListProvider({
     Key key,
     @required this.child,
   }) : super(key: key, child: child);
@@ -19,12 +19,12 @@ class BlocProvider extends InheritedWidget {
 
   final bloc = ItemListBloc();
 
-  static BlocProvider of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(BlocProvider) as BlocProvider;
+  static ItemListProvider of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(ItemListProvider) as ItemListProvider;
   }
 
   @override
-  bool updateShouldNotify(BlocProvider oldWidget) {
+  bool updateShouldNotify(ItemListProvider oldWidget) {
     return true;
   }
 }
@@ -50,12 +50,12 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   @override
   dispose() {
-    BlocProvider.of(context).bloc.dispose();
+    ItemListProvider.of(context).bloc.dispose();
     super.dispose();
   }
 
   Widget build(BuildContext context) {
-    final _bloc = BlocProvider.of(context).bloc;
+    final _itemListBloc = ItemListProvider.of(context).bloc;
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -68,7 +68,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
         ),
         actions: <Widget>[
           StreamBuilder(
-            stream: _bloc.alphabeticalStream,
+            stream: _itemListBloc.alphabeticalStream,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               return IconButton(
                 icon: Icon(Icons.sort_by_alpha),
@@ -97,7 +97,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                       Expanded(
                         child: Container(
                           child: StreamBuilder(
-                            stream: _bloc.itemListStream,
+                            stream: _itemListBloc.itemListStream,
                             builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
                               return ListView(
                                 children: (snapshot.hasData
@@ -145,17 +145,17 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   void _deleteItem(BuildContext context, Item item) {
-    BlocProvider.of(context).bloc.deleteItemSink.add(item.number);
+    ItemListProvider.of(context).bloc.deleteItemSink.add(item.number);
     _sendDeleteFeedbackMessage(context, 'Item "${item.name}" deleted.');
   }
 
   void _deleteItemList(BuildContext context) {
-    BlocProvider.of(context).bloc.deleteItemList();
+    ItemListProvider.of(context).bloc.deleteItemList();
     _sendDeleteFeedbackMessage(context, 'Items deleted.');
   }
 
   void _toggleAlphabetical(BuildContext context) {
-    BlocProvider.of(context).bloc.toggleAlphabetical();
+    ItemListProvider.of(context).bloc.toggleAlphabetical();
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
@@ -173,6 +173,6 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   void _undoDismissedItem(BuildContext context) {
-    BlocProvider.of(context).bloc.revertItemList();
+    ItemListProvider.of(context).bloc.revertItemList();
   }
 }
