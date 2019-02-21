@@ -104,7 +104,7 @@ class _ItemMaskState extends State<ItemMask> {
         return _sendFeedbackMessage(context, FeedbackType.warning, 'This number is already taken.', 3);
       case 3:
         _addItemToItemList(context, item);
-        return _sendFeedbackMessage(context, null, 'Item "${item.name}" added successfully.', 1);
+        return null;
       default:
         return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.', 3);
     }

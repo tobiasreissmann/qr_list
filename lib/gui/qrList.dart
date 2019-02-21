@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibrate/vibrate.dart';
+import 'package:flutter/animation.dart';
 
 import 'package:qr_list/bloc/itemListBloc.dart';
 import 'package:qr_list/gui/itemEntry.dart';
@@ -33,9 +34,19 @@ class QRList extends StatefulWidget {
   _QRList createState() => new _QRList();
 }
 
-class _QRList extends State<QRList> {
+class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   final _key = GlobalKey<ScaffoldState>();
   ScrollController _listScrollController = new ScrollController();
+  AnimationController animationController;
+  Animation animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(duration: Duration(milliseconds: 700), vsync: this);
+    animation = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(curve: Curves.fastOutSlowIn, parent: animationController));
+    animationController.forward();
+  }
 
   @override
   dispose() {
@@ -45,67 +56,74 @@ class _QRList extends State<QRList> {
 
   Widget build(BuildContext context) {
     final _bloc = BlocProvider.of(context).bloc;
-    return GestureDetector(
-      onTap: () => _key.currentState.removeCurrentSnackBar(),
-      child: Scaffold(
-        key: _key,
-        appBar: AppBar(
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          title: Text(
-            'QR-Shoppinglist',
-            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
-          ),
-          actions: <Widget>[
-            StreamBuilder(
-              stream: _bloc.alphabeticalStream,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                return IconButton(
-                  icon: Icon(Icons.sort_by_alpha),
-                  color: snapshot.hasData ? snapshot.data ? Colors.green : Colors.grey : Colors.grey,
-                  onPressed: () {
-                    _toggleAlphabetical(context);
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.delete_sweep),
-              color: Colors.red[700],
-              onPressed: () => _deleteItemList(context),
-            ),
-          ],
+    return Scaffold(
+      key: _key,
+      appBar: AppBar(
+        brightness: Brightness.light,
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          'QR-Shoppinglist',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
         ),
-        body: Builder(
-          builder: (context) => Stack(
-                children: <Widget>[
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: StreamBuilder(
-                              stream: _bloc.itemListStream,
-                              builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
-                                return ListView(
-                                  children: (snapshot.hasData
+        actions: <Widget>[
+          StreamBuilder(
+            stream: _bloc.alphabeticalStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return IconButton(
+                icon: Icon(Icons.sort_by_alpha),
+                color: snapshot.hasData ? snapshot.data ? Colors.green : Colors.grey : Colors.grey,
+                onPressed: () {
+                  _toggleAlphabetical(context);
+                },
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_sweep),
+            color: Colors.red[700],
+            onPressed: () => _deleteItemList(context),
+          ),
+        ],
+      ),
+      body: Builder(
+        builder: (context) => Stack(
+              children: <Widget>[
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: StreamBuilder(
+                            stream: _bloc.itemListStream,
+                            builder: (BuildContext context, AsyncSnapshot<List<Item>> snapshot) {
+                              return ListView(
+                                children: (snapshot.hasData
                                     ? (snapshot.data.map((item) => _buildItemEntry(context, item)).toList())
                                     : [_buildPlaceholer(0)].toList()
                                   ..addAll([ItemMask(), _buildPlaceholer(300)].toList())),
-                                  controller: _listScrollController,
-                                );
-                              },
-                            ),
+                                controller: _listScrollController,
+                              );
+                            },
                           ),
                         ),
-                      ]),
-                  MediaQuery.of(context).viewInsets.bottom > 0 ? _buildPlaceholer(0) : ScanButton(scrollController: _listScrollController),
-                ],
-              ),
-        ),
+                      ),
+                    ]),
+                AnimatedBuilder(
+                  animation: animationController,
+                  builder: (BuildContext context, Widget child) {
+                    final _width = MediaQuery.of(context).size.width;
+                    return MediaQuery.of(context).viewInsets.bottom > 0
+                        ? _buildPlaceholer(0)
+                        : Transform(
+                            transform: Matrix4.translationValues(0.0, animation.value * _width, 0.0),
+                            child: ScanButton(scrollController: _listScrollController));
+                  },
+                ),
+              ],
+            ),
       ),
     );
   }

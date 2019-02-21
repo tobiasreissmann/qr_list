@@ -79,8 +79,7 @@ class ItemListBloc {
   }
 
   List<Item> _sortList(List<Item> _list) {
-    _list.sort((a, b) => a.name.compareTo(b.name));
-    return _list.toList();
+    return _list..sort((a, b) => a.name.compareTo(b.name));
   }
 
   int validateItem(Item item) {
