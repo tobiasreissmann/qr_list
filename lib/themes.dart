@@ -22,7 +22,6 @@ ThemeData get lightTheme {
     accentColor: Colors.green,
     brightness: Brightness.light,
     buttonColor: Colors.green,
-    cardColor: Colors.black,
     cursorColor: Colors.green,
     disabledColor: Colors.grey,
     highlightColor: Colors.white,
@@ -32,5 +31,6 @@ ThemeData get lightTheme {
     textSelectionColor: Colors.green,
     textSelectionHandleColor: Colors.green,
     toggleableActiveColor: Colors.green,
+    errorColor: Colors.red,
   );
 }

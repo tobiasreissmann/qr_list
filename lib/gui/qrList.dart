@@ -59,6 +59,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
       key: _key,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        brightness: Theme.of(context).brightness,
         elevation: 0.0,
         title: Text(
           'QR-Shoppinglist',
@@ -71,14 +72,14 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
             builder: (BuildContext context, AsyncSnapshot alphabetical) {
               return IconButton(
                 icon: Icon(Icons.sort_by_alpha),
-                color: alphabetical.data ? Colors.green : Colors.grey,
+                color: alphabetical.data ? Theme.of(context).primaryColor : Theme.of(context).disabledColor,
                 onPressed: () => _toggleAlphabetical(context),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.delete_sweep),
-            color: Colors.red,
+            color: Theme.of(context).errorColor,
             onPressed: () => _deleteItemList(context),
           ),
         ],
