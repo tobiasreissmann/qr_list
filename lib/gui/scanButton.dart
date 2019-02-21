@@ -52,8 +52,8 @@ class ScanButton extends StatelessWidget {
       final item = _readItemFromScan(scan);
 
       // check item validitys
-      final _bloc = ItemListProvider.of(context).itemListBloc;
-      switch (_bloc.validateItem(item)) {
+      final _itemListBloc = ItemListProvider.of(context).itemListBloc;
+      switch (_itemListBloc.validateItem(item)) {
         case 0:
           return _sendFeedbackMessage(context, FeedbackType.warning, 'There was a recognizing the item.', 3);
         case 1:
@@ -64,7 +64,7 @@ class ScanButton extends StatelessWidget {
           // no problems -> add item to itemList
           _addItemToItemList(context, item);
           // scroll to bottom of list
-          _bloc.alphabeticalStream.listen((alphabetical) {
+          _itemListBloc.alphabeticalStream.listen((alphabetical) {
             if (!alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
           });
           return _sendFeedbackMessage(context, FeedbackType.light, 'Item added "${item.name}" successfully.', 1);

@@ -7,19 +7,19 @@ import 'package:qr_list/themes.dart';
 main() {
   runApp(
     ThemeProvider(
-      child: QrListApp(),
+      child: QRListApp(),
     ),
   );
 }
 
-class QrListApp extends StatefulWidget {
+class QRListApp extends StatefulWidget {
   @override
-  QrListAppState createState() {
-    return QrListAppState();
+  QRListAppState createState() {
+    return QRListAppState();
   }
 }
 
-class QrListAppState extends State<QrListApp> {
+class QRListAppState extends State<QRListApp> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
