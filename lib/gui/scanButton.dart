@@ -20,7 +20,8 @@ class ScanButton extends StatelessWidget {
             child: ButtonTheme(
               minWidth: MediaQuery.of(context).size.width / 2,
               height: 70,
-              buttonColor: Colors.green,
+              buttonColor: Theme.of(context).buttonColor,
+              splashColor: Theme.of(context).splashColor,
               child: RaisedButton(
                 elevation: 8,
                 textColor: Colors.white,
@@ -51,7 +52,7 @@ class ScanButton extends StatelessWidget {
       final item = _readItemFromScan(scan);
 
       // check item validitys
-      final _itemListBloc = ItemListProvider.of(context).bloc;
+      final _itemListBloc = ItemListProvider.of(context).itemListBloc;
       switch (_itemListBloc.validateItem(item)) {
         case 0:
           return _sendFeedbackMessage(context, FeedbackType.warning, 'There was a recognizing the item.', 3);
@@ -102,6 +103,6 @@ class ScanButton extends StatelessWidget {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).bloc.addItemSink.add(item);
+    ItemListProvider.of(context).itemListBloc.addItemSink.add(item);
   }
 }

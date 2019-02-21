@@ -44,7 +44,7 @@ class _ItemMaskState extends State<ItemMask> {
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).cardColor,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.text,
@@ -68,7 +68,7 @@ class _ItemMaskState extends State<ItemMask> {
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).cardColor,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.number,
@@ -84,7 +84,7 @@ class _ItemMaskState extends State<ItemMask> {
             alignment: Alignment.centerRight,
             child: IconButton(
               icon: Icon(Icons.playlist_add),
-              color: Colors.green,
+              color: Theme.of(context).primaryColor,
               onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
             ),
           ),
@@ -94,7 +94,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    final _itemListBloc = ItemListProvider.of(context).bloc;
+    final _itemListBloc = ItemListProvider.of(context).itemListBloc;
     switch (_itemListBloc.validateItem(item)) {
       case 0:
         return _sendFeedbackMessage(context, FeedbackType.warning, 'There are fields left that need to be filled.', 3);
@@ -111,7 +111,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).bloc.addItemSink.add(item);
+    ItemListProvider.of(context).itemListBloc.addItemSink.add(item);
     _nameController.clear();
     _numberController.clear();
   }
