@@ -6,15 +6,14 @@ ThemeData get darkTheme {
     brightness: Brightness.dark,
     buttonColor: Colors.green,
     cursorColor: Colors.green,
-    primaryColor: Colors.green,
+    disabledColor: Colors.white,
     highlightColor: Colors.black,
+    primaryColor: Colors.green,
+    scaffoldBackgroundColor: Colors.black,
     splashColor: Colors.black,
     textSelectionColor: Colors.green,
     textSelectionHandleColor: Colors.green,
-    scaffoldBackgroundColor: Colors.black,
-    disabledColor: Colors.white,
     toggleableActiveColor: Colors.green,
-    cardColor: Colors.white,
   );
 }
 
@@ -23,15 +22,15 @@ ThemeData get lightTheme {
     accentColor: Colors.green,
     brightness: Brightness.light,
     buttonColor: Colors.green,
+    cardColor: Colors.black,
     cursorColor: Colors.green,
-    primaryColor: Colors.green,
+    disabledColor: Colors.grey,
     highlightColor: Colors.white,
+    primaryColor: Colors.green,
+    scaffoldBackgroundColor: Colors.white,
     splashColor: Colors.grey,
     textSelectionColor: Colors.green,
     textSelectionHandleColor: Colors.green,
-    scaffoldBackgroundColor: Colors.white,
-    disabledColor: Colors.grey,
     toggleableActiveColor: Colors.green,
-    cardColor: Colors.black,
   );
 }

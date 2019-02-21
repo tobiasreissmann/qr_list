@@ -84,7 +84,7 @@ class _ItemMaskState extends State<ItemMask> {
             alignment: Alignment.centerRight,
             child: IconButton(
               icon: Icon(Icons.playlist_add),
-              color: Colors.green,
+              color: Theme.of(context).primaryColor,
               onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
             ),
           ),

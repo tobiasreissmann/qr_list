@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/main.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
 
@@ -56,43 +55,30 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   Widget build(BuildContext context) {
     final _itemListBloc = ItemListProvider.of(context).itemListBloc;
-    final _themeBloc = ThemeProvider.of(context).themeBloc;
     return Scaffold(
       key: _key,
       appBar: AppBar(
-        brightness: Theme.of(context).brightness,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0.0,
         title: Text(
           'QR-Shoppinglist',
-          style: TextStyle(color: Colors.green, fontWeight: FontWeight.w400, fontSize: 24),
+          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w400, fontSize: 24),
         ),
         actions: <Widget>[
-          StreamBuilder(
-            stream: _themeBloc.lightThemeEnabled,
-            initialData: true,
-            builder: (BuildContext context, AsyncSnapshot lightThemeEnabled) {
-              return IconButton(
-                icon: Icon(Icons.invert_colors),
-                color: Theme.of(context).disabledColor,
-                onPressed: () => _toggleTheme(),
-              );
-            },
-          ),
           StreamBuilder(
             stream: _itemListBloc.alphabeticalStream,
             initialData: false,
             builder: (BuildContext context, AsyncSnapshot alphabetical) {
               return IconButton(
                 icon: Icon(Icons.sort_by_alpha),
-                color: alphabetical.data ? Theme.of(context).toggleableActiveColor : Theme.of(context).disabledColor,
+                color: alphabetical.data ? Colors.green : Colors.grey,
                 onPressed: () => _toggleAlphabetical(context),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.delete_sweep),
-            color: Colors.red[700],
+            color: Colors.red,
             onPressed: () => _deleteItemList(context),
           ),
         ],
@@ -184,11 +170,5 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   void _undoDismissedItem(BuildContext context) {
     ItemListProvider.of(context).itemListBloc.revertItemList();
-  }
-
-  void _toggleTheme() {
-    ThemeProvider.of(context).themeBloc.changeTheme();
-    // SystemChrome.setSystemUIOverlayStyle(
-    //     SystemUiOverlayStyle(statusBarColor: lightThemeEnabled ? lightTheme.scaffoldBackgroundColor : darkTheme.scaffoldBackgroundColor));
   }
 }
