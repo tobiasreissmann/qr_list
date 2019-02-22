@@ -48,7 +48,7 @@ class ItemListBloc {
   void _addItemToItemList(Item item) {
     _itemList.add(item);
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
-    databaseDeleteItem(item);
+    databaseAddItem(item);
   }
 
   void _removeItemFromItemList(String number) {
@@ -76,6 +76,7 @@ class ItemListBloc {
   void revertItemList() {
     _itemList = _backupItemList;
     _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    databaseSaveItemList(_itemList);
   }
 
   List<Item> _sortList(List<Item> _list) {
