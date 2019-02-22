@@ -7,16 +7,14 @@ environment:
   sdk: '>=2.0.0-dev.68.0 <3.0.0'
 
 dependencies:
-  path_provider: 0.4.1
+  path_provider: ^0.5.0+1
   barcode_scan: ^0.0.4
-  vibrate: any
-  sqflite: any
-  shared_preferences: any
+  vibrate: ^0.0.4
+  sqflite: ^1.1.1
+  shared_preferences: ^0.5.1+1
   flutter:
     sdk: flutter
   rxdart: ^0.20.0
-
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:

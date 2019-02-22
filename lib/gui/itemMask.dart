@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:vibrate/vibrate.dart';
 
-import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/models/item.dart';
 
 class ItemMask extends StatefulWidget {
@@ -44,11 +44,11 @@ class _ItemMaskState extends State<ItemMask> {
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).indicatorColor,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Item',
               ),
             ),
@@ -67,12 +67,12 @@ class _ItemMaskState extends State<ItemMask> {
                 if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
-              style: new TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: Theme.of(context).indicatorColor,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Number',
               ),
             ),
