@@ -1,16 +1,16 @@
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 
-import 'package:qr_list/gui/qrList.dart';
-import 'package:qr_list/themes.dart';
 import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/bloc/themeProvider.dart';
+import 'package:qr_list/gui/qrList.dart';
+import 'package:qr_list/locale/locales.dart';
+import 'package:qr_list/themes.dart';
 
 main() {
   runApp(
     ThemeProvider(
-      child: ItemListProvider(
-        child: QRListApp(),
-      ),
+      child: QRListApp(),
     ),
   );
 }
@@ -35,7 +35,16 @@ class QRListAppState extends State<QRListApp> {
       initialData: true,
       builder: (BuildContext context, AsyncSnapshot lightThemeEnabled) {
         return MaterialApp(
-          title: 'QR-Shoppinglist',
+          localizationsDelegates: [
+            AppLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en', 'US'), // English
+            const Locale('de', 'DE'), // German
+          ],
+          onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).title,
           theme: lightThemeEnabled.data ? lightTheme : darkTheme,
           home: ItemListProvider(
             child: QRList(),

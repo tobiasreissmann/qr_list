@@ -1,0 +1,92 @@
+{
+  "title": "QR-Einkaufsliste",
+  "@title": {
+    "description": "The title of the application",
+    "type": "text",
+    "placeholders": {}
+  },
+  "deleteItemList": "Alle Artikel wurden gelöscht.",
+  "@deleteItemList": {
+    "description": "Feedback after deleting item list.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "emptyFields": "Es wurden noch nicht alle Felder ausgefüllt.",
+  "@emptyFields": {
+    "description": "Feedback when trying to push item with empty values.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "itemExists": "Die Liste beinhaltet diesen Artikel bereits.",
+  "@itemExists": {
+    "description": "Feedback when item is already in list.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "item": "Artikel",
+  "@item": {
+    "description": "designation of item",
+    "type": "text",
+    "placeholders": {}
+  },
+  "noCameraPermission": "Kein Kamera-Berechtigungen erteilt.",
+  "@noCameraPermission": {
+    "description": "Feedback when trying to scan code without camera permissions.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "numberExists": "Diese Nummer wurde schon vergeben.",
+  "@numberExists": {
+    "description": "Feedback when trying to commit item without unique number",
+    "type": "text",
+    "placeholders": {}
+  },
+  "number": "Artikelnummer",
+  "@number": {
+    "description": "designation of item number",
+    "type": "text",
+    "placeholders": {}
+  },
+  "scanButton": "SCANNEN",
+  "@scanButton": {
+    "description": "label of scan button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "undefinedIssue": "Ein Problem ist aufgetreten.",
+  "@undefinedIssue": {
+    "description": "Feedback when an issue occured, that could not be idendified.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "undefinedScanIssue": "Es gab einen Fehler beim Untersuchen des Artikels.",
+  "@undefinedScanIssue": {
+    "description": "Feedback when scan crashed without knowing the cause",
+    "type": "text",
+    "placeholders": {}
+  },
+  "undo": "ZURÜCK",
+  "@undo": {
+    "description": "label of undo button",
+    "type": "text",
+    "placeholders": {}
+  },
+  "unsupportedScan": "Dieser Bar-/ QR-Code wird nicht unterstützt.",
+  "@unsupportedScan": {
+    "description": "Feedback when scan form is not supported.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "itemDeleted": "entfernt",
+  "@unsupportedScan": {
+    "description": "Feedback when item was deleted.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "itemAdded": "hinzugefügt",
+  "@unsupportedScan": {
+    "description": "Feedback when item was added.",
+    "type": "text",
+    "placeholders": {}
+  }
+}

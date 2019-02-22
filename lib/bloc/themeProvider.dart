@@ -17,6 +17,6 @@ class ThemeProvider extends InheritedWidget {
 
   @override
   bool updateShouldNotify(ThemeProvider oldWidget) {
-    return true;
+    return false;
   }
 }

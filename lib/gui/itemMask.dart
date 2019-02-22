@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 
+import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/models/item.dart';
 
 class ItemMask extends StatefulWidget {
@@ -49,7 +50,7 @@ class _ItemMaskState extends State<ItemMask> {
               ),
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
-                labelText: 'Item',
+                labelText: AppLocalizations.of(context).item,
               ),
             ),
           ),
@@ -73,7 +74,7 @@ class _ItemMaskState extends State<ItemMask> {
               ),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Number',
+                labelText: AppLocalizations.of(context).number,
               ),
             ),
           ),
@@ -97,16 +98,16 @@ class _ItemMaskState extends State<ItemMask> {
     final _itemListBloc = ItemListProvider.of(context).itemListBloc;
     switch (_itemListBloc.validateItem(item)) {
       case 0:
-        return _sendFeedbackMessage(context, FeedbackType.warning, 'There are fields left that need to be filled.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).emptyFields, 3);
       case 1:
-        return _sendFeedbackMessage(context, FeedbackType.warning, 'The list already contains this item.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
       case 2:
-        return _sendFeedbackMessage(context, FeedbackType.warning, 'This number is already taken.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
       case 3:
         _addItemToItemList(context, item);
         return null;
       default:
-        return _sendFeedbackMessage(context, FeedbackType.error, 'There was an issue.', 3);
+        return _sendFeedbackMessage(context, FeedbackType.error, AppLocalizations.of(context).undefinedIssue, 3);
     }
   }
 

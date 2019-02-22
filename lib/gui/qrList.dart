@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_list/bloc/themeProvider.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
 
@@ -42,7 +43,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
         brightness: Theme.of(context).brightness,
         elevation: 0.0,
         title: Text(
-          'QR-Shoppinglist',
+          AppLocalizations.of(context).title,
           style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w400, fontSize: 24),
         ),
         actions: <Widget>[
@@ -128,12 +129,12 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   void _deleteItem(BuildContext context, Item item) {
     ItemListProvider.of(context).itemListBloc.deleteItemSink.add(item.number);
-    _sendDeleteFeedbackMessage(context, 'Item "${item.name}" deleted.');
+    _sendDeleteFeedbackMessage(context, '${item.name} ${AppLocalizations.of(context).itemDeleted}');
   }
 
   void _deleteItemList(BuildContext context) {
     ItemListProvider.of(context).itemListBloc.deleteItemList();
-    _sendDeleteFeedbackMessage(context, 'Items deleted.');
+    _sendDeleteFeedbackMessage(context, AppLocalizations.of(context).deleteItemList);
   }
 
   void _toggleAlphabetical(BuildContext context) {
@@ -141,13 +142,13 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
-    Vibrate.feedback(FeedbackType.impact);
+    Vibrate.feedback(FeedbackType.light);
     _key.currentState.removeCurrentSnackBar();
     _key.currentState.showSnackBar(
       SnackBar(
         content: Text(feedbackMessage),
         action: new SnackBarAction(
-          label: 'UNDO',
+          label: AppLocalizations.of(context).undo,
           onPressed: () => _undoDismissedItem(context),
         ),
       ),
