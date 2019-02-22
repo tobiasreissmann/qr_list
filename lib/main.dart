@@ -1,23 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/themes.dart';
+import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/bloc/themeProvider.dart';
 
 main() {
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white));
-  runApp(QRListApp());
+  runApp(
+    ThemeProvider(
+      child: ItemListProvider(
+        child: QRListApp(),
+      ),
+    ),
+  );
 }
 
-class QRListApp extends StatelessWidget {
+class QRListApp extends StatefulWidget {
+  @override
+  QRListAppState createState() {
+    return QRListAppState();
+  }
+}
+
+class QRListAppState extends State<QRListApp> {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QR-Shoppinglist',
-      theme: lightTheme,
-      home: ItemListProvider(
-        child: QRList(),
-      ),
+    return StreamBuilder(
+      stream: ThemeProvider.of(context).themeBloc.lightThemeEnabled,
+      initialData: true,
+      builder: (BuildContext context, AsyncSnapshot lightThemeEnabled) {
+        return MaterialApp(
+          title: 'QR-Shoppinglist',
+          theme: lightThemeEnabled.data ? lightTheme : darkTheme,
+          home: ItemListProvider(
+            child: QRList(),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,41 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:qr_list/bloc/themeProvider.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
 
-import 'package:qr_list/bloc/itemListBloc.dart';
+import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/gui/itemEntry.dart';
 import 'package:qr_list/gui/itemMask.dart';
 import 'package:qr_list/gui/scanButton.dart';
 import 'package:qr_list/models/item.dart';
 
-class ItemListProvider extends InheritedWidget {
-  ItemListProvider({
-    Key key,
-    @required this.child,
-  }) : super(key: key, child: child);
-
-  final Widget child;
-
-  final itemListBloc = ItemListBloc();
-
-  static ItemListProvider of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(ItemListProvider) as ItemListProvider;
-  }
-
-  @override
-  bool updateShouldNotify(ItemListProvider oldWidget) {
-    return true;
-  }
-}
-
 class QRList extends StatefulWidget {
   @override
-  _QRList createState() => new _QRList();
+  _QRList createState() => _QRList();
 }
 
 class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   final _key = GlobalKey<ScaffoldState>();
-  ScrollController _listScrollController = new ScrollController();
+  ScrollController _listScrollController = ScrollController();
   AnimationController animationController;
   Animation animation;
 
@@ -54,7 +35,6 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   Widget build(BuildContext context) {
-    final _itemListBloc = ItemListProvider.of(context).itemListBloc;
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -66,8 +46,13 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w400, fontSize: 24),
         ),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.invert_colors),
+            color: Theme.of(context).disabledColor,
+            onPressed: () => _toggleTheme(context),
+          ),
           StreamBuilder(
-            stream: _itemListBloc.alphabeticalStream,
+            stream: ItemListProvider.of(context).itemListBloc.alphabeticalStream,
             initialData: false,
             builder: (BuildContext context, AsyncSnapshot alphabetical) {
               return IconButton(
@@ -94,7 +79,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                     Expanded(
                       child: Container(
                         child: StreamBuilder(
-                          stream: _itemListBloc.itemListStream,
+                          stream: ItemListProvider.of(context).itemListBloc.itemListStream,
                           builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
                             return ListView(
                               children: (itemList.hasData
@@ -171,5 +156,9 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   void _undoDismissedItem(BuildContext context) {
     ItemListProvider.of(context).itemListBloc.revertItemList();
+  }
+
+  void _toggleTheme(BuildContext context) {
+    ThemeProvider.of(context).themeBloc.changeTheme();
   }
 }

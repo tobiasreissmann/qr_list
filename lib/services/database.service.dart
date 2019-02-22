@@ -14,7 +14,7 @@ Future<List<Item>> get databaseItemList async {
   List<Map> list = await database.rawQuery('SELECT * FROM Items');
   List<Item> _itemList = [];
   for (var i = 0; i < list.length; i++) _itemList.add(Item(list[i]['name'], list[i]['number']));
-  await database.close();
+  // await database.close();
   return _itemList;  
 }
 
