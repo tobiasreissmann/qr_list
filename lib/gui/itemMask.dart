@@ -44,7 +44,7 @@ class _ItemMaskState extends State<ItemMask> {
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
-                color: Theme.of(context).cardColor,
+                color: Colors.black,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.text,
@@ -68,7 +68,7 @@ class _ItemMaskState extends State<ItemMask> {
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
-                color: Theme.of(context).cardColor,
+                color: Colors.black,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.number,
