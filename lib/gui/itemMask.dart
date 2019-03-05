@@ -39,9 +39,10 @@ class _ItemMaskState extends State<ItemMask> {
             child: TextFormField(
               controller: _nameController,
               focusNode: _nameFocusNode,
+              scrollPadding: EdgeInsets.all(-50),
               onFieldSubmitted: (string) {
-                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
                 if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
                 _confirmItem(context, Item(_nameController.text, _numberController.text));
               },
               style: new TextStyle(
@@ -50,12 +51,17 @@ class _ItemMaskState extends State<ItemMask> {
               ),
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
                 labelText: AppLocalizations.of(context).item,
               ),
             ),
           ),
         ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+        ),
         Flexible(
           flex: 0,
           child: Container(
@@ -63,6 +69,7 @@ class _ItemMaskState extends State<ItemMask> {
             child: TextFormField(
               controller: _numberController,
               focusNode: _numberFocusNode,
+              scrollPadding: EdgeInsets.all(-50),
               onFieldSubmitted: (string) {
                 if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
                 if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
@@ -74,6 +81,9 @@ class _ItemMaskState extends State<ItemMask> {
               ),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
                 labelText: AppLocalizations.of(context).number,
               ),
             ),
