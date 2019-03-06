@@ -129,7 +129,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   void _deleteItem(BuildContext context, Item item) {
     ItemListProvider.of(context).itemListBloc.deleteItemSink.add(item.number);
-    _sendDeleteFeedbackMessage(context, '${item.name} ${AppLocalizations.of(context).itemDeleted}');
+    _sendDeleteFeedbackMessage(context, '"${item.name}" ${AppLocalizations.of(context).itemDeleted}');
   }
 
   void _deleteItemList(BuildContext context) {

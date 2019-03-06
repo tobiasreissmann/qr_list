@@ -68,7 +68,7 @@ class ScanButton extends StatelessWidget {
           _itemListBloc.alphabeticalStream.listen((alphabetical) {
             if (!alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
           });
-          return _sendFeedbackMessage(context, FeedbackType.light, '${item.name} ${AppLocalizations.of(context).itemAdded}', 2);
+          return _sendFeedbackMessage(context, FeedbackType.light, '"${item.name}" ${AppLocalizations.of(context).itemAdded}', 2);
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied)
