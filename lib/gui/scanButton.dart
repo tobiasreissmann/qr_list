@@ -19,12 +19,12 @@ class ScanButton extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 24),
           child: Container(
             child: ButtonTheme(
-              minWidth: MediaQuery.of(context).size.width / 2,
+              minWidth: 210,
               height: 70,
               buttonColor: Theme.of(context).buttonColor,
               splashColor: Theme.of(context).splashColor,
               child: RaisedButton(
-                elevation: 8,
+                elevation: 9,
                 textColor: Colors.white,
                 onPressed: () {
                   return _readCode(context);

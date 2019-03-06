@@ -53,6 +53,7 @@ class _ItemMaskState extends State<ItemMask> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
                 ),
                 labelText: AppLocalizations.of(context).item,
               ),
@@ -83,6 +84,7 @@ class _ItemMaskState extends State<ItemMask> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
                 ),
                 labelText: AppLocalizations.of(context).number,
               ),

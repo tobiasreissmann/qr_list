@@ -88,7 +88,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                             children: itemList.hasData
                                 ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
                                 : [_buildPlaceholer(0)].toList()
-                              ..addAll([ItemMask(), _buildPlaceholer(200)].toList()),
+                              ..addAll([_buildPlaceholer(16), ItemMask(), _buildPlaceholer(200)].toList()),
                             controller: _listScrollController,
                           );
                         },
@@ -107,7 +107,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           );
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
