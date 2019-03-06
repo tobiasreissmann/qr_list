@@ -19,7 +19,10 @@ class ItemEntry extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(
                   item.name,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Theme.of(context).indicatorColor,
+                  ),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
                 ),
@@ -29,7 +32,13 @@ class ItemEntry extends StatelessWidget {
               fit: FlexFit.tight,
               child: Container(
                 alignment: Alignment.centerRight,
-                child: Text(item.number, style: TextStyle(fontSize: 28.0), overflow: TextOverflow.ellipsis, textAlign: TextAlign.left),
+                child: Text(item.number,
+                    style: TextStyle(
+                      fontSize: 28.0,
+                      color: Theme.of(context).indicatorColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.left),
               ),
             ),
           ]),
