@@ -50,11 +50,6 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w400, fontSize: 24),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.invert_colors),
-            color: Theme.of(context).disabledColor,
-            onPressed: () => _toggleTheme(context),
-          ),
           StreamBuilder(
             stream: ItemListProvider.of(context).itemListBloc.alphabeticalStream,
             initialData: false,
@@ -70,6 +65,37 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
             icon: Icon(Icons.delete_sweep),
             color: Theme.of(context).errorColor,
             onPressed: () => _deleteItemList(context),
+          ),
+          PopupMenuButton(
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).disabledColor,
+            ),
+            onSelected: (Options option) => _optionSelected(context, option),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+                  PopupMenuItem(
+                    value: Options.toggleTheme,
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 38,
+                          alignment: FractionalOffset(0, 0.5),
+                          child: Icon(
+                            Icons.invert_colors,
+                            color: Theme.of(context).disabledColor,
+                          ),
+                        ),
+                        Container(
+                          alignment: FractionalOffset(0, 0.5),
+                          child: Text(
+                            'Dark Mode',
+                            style: TextStyle(color: Theme.of(context).indicatorColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
           ),
         ],
       ),
@@ -87,8 +113,8 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                           return ListView(
                             children: itemList.hasData
                                 ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
-                                : [_buildPlaceholer(0)].toList()
-                              ..addAll([_buildPlaceholer(16), ItemMask(), _buildPlaceholer(200)].toList()),
+                                : [_buildPlaceholder(0)].toList()
+                              ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
                             controller: _listScrollController,
                           );
                         },
@@ -111,6 +137,14 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     );
   }
 
+  void _optionSelected(BuildContext context, Options option) {
+    switch (option) {
+      case Options.toggleTheme:
+        _toggleTheme(context);
+        break;
+    }
+  }
+
   Widget _buildItemEntry(BuildContext context, Item item) {
     return Dismissible(
       key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
@@ -121,7 +155,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildPlaceholer(double height) {
+  Widget _buildPlaceholder(double height) {
     return SizedBox(
       height: height,
     );
@@ -163,3 +197,5 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     ThemeProvider.of(context).themeBloc.changeTheme();
   }
 }
+
+enum Options { toggleTheme }
