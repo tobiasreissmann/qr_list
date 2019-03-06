@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_list/bloc/themeProvider.dart';
 import 'package:qr_list/locale/locales.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
 
@@ -20,6 +22,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   ScrollController _listScrollController = ScrollController();
   AnimationController animationController;
   Animation animation;
+  bool _rotationLock = false;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
       parent: animationController,
     ));
     animationController.forward();
+    _loadSettings();
   }
 
   @override
@@ -89,7 +93,33 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                           alignment: FractionalOffset(0, 0.5),
                           child: Text(
                             'Dark Mode',
-                            style: TextStyle(color: Theme.of(context).indicatorColor),
+                            style: TextStyle(
+                              color: Theme.of(context).indicatorColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: Options.toggleRotationLock,
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 38,
+                          alignment: FractionalOffset(0, 0.5),
+                          child: Icon(
+                            Icons.screen_lock_portrait,
+                            color: _rotationLock ? Theme.of(context).primaryColor : Theme.of(context).disabledColor,
+                          ),
+                        ),
+                        Container(
+                          alignment: FractionalOffset(0, 0.5),
+                          child: Text(
+                            'Lock Rotation',
+                            style: TextStyle(
+                              color: Theme.of(context).indicatorColor,
+                            ),
                           ),
                         ),
                       ],
@@ -142,6 +172,9 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
       case Options.toggleTheme:
         _toggleTheme(context);
         break;
+      case Options.toggleRotationLock:
+        _toggleRotationLock();
+        break;
     }
   }
 
@@ -175,6 +208,15 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     ItemListProvider.of(context).itemListBloc.toggleAlphabetical();
   }
 
+  void _toggleRotationLock() async {
+    _rotationLock = !_rotationLock;
+    _rotationLock
+        ? SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        : SystemChrome.setPreferredOrientations([]);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('rotationLock', _rotationLock);
+  }
+
   void _sendDeleteFeedbackMessage(BuildContext context, String feedbackMessage) {
     Vibrate.feedback(FeedbackType.light);
     _key.currentState.removeCurrentSnackBar();
@@ -196,6 +238,14 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   void _toggleTheme(BuildContext context) {
     ThemeProvider.of(context).themeBloc.changeTheme();
   }
+
+  void _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    _rotationLock = prefs.getBool('rotationLock') ?? false;
+    _rotationLock
+        ? SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        : SystemChrome.setPreferredOrientations([]);
+  }
 }
 
-enum Options { toggleTheme }
+enum Options { toggleTheme, toggleRotationLock }
