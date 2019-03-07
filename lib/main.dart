@@ -2,14 +2,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
-import 'package:qr_list/bloc/themeProvider.dart';
+import 'package:qr_list/bloc/settingsProvider.dart';
 import 'package:qr_list/gui/qrList.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/themes.dart';
 
 main() {
   runApp(
-    ThemeProvider(
+    SettingsProvider(
       child: QRListApp(),
     ),
   );
@@ -31,9 +31,9 @@ class QRListAppState extends State<QRListApp> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: ThemeProvider.of(context).themeBloc.lightThemeEnabled,
-      initialData: true,
-      builder: (BuildContext context, AsyncSnapshot lightThemeEnabled) {
+      stream: SettingsProvider.of(context).settingsBloc.darkThemeEnabled,
+      initialData: false,
+      builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
         return MaterialApp(
           localizationsDelegates: [
             AppLocalizationsDelegate(),
@@ -45,7 +45,7 @@ class QRListAppState extends State<QRListApp> {
             const Locale('de', 'DE'), // German
           ],
           onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).title,
-          theme: lightThemeEnabled.data ? lightTheme : darkTheme,
+          theme: darkThemeEnabled.data ? darkTheme : lightTheme,
           home: ItemListProvider(
             child: QRList(),
           ),
