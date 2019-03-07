@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/gui/settings.dart';
+import 'package:qr_list/gui/qrListAppBar.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
