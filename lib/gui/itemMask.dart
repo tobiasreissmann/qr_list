@@ -37,6 +37,7 @@ class _ItemMaskState extends State<ItemMask> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
+              keyboardAppearance: Theme.of(context).brightness,
               controller: _nameController,
               focusNode: _nameFocusNode,
               scrollPadding: EdgeInsets.all(-50),
@@ -61,13 +62,14 @@ class _ItemMaskState extends State<ItemMask> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
         ),
         Flexible(
           flex: 0,
           child: Container(
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextFormField(
+              keyboardAppearance: Theme.of(context).brightness,
               controller: _numberController,
               focusNode: _numberFocusNode,
               scrollPadding: EdgeInsets.all(-50),
@@ -107,6 +109,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
+    FocusScope.of(context).requestFocus(new FocusNode());
     final _itemListBloc = ItemListProvider.of(context).itemListBloc;
     switch (_itemListBloc.validateItem(item)) {
       case 0:
