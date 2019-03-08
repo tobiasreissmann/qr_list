@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/gui/presentationEntry.dart';
+import 'package:qr_list/gui/itemEntry.dart';
 import 'package:qr_list/models/item.dart';
 
 class PresentationMode extends StatefulWidget {
@@ -101,7 +101,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
     return Dismissible(
       key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
       onDismissed: (direction) => setState(() => sortedItemList.removeWhere((_item) => _item.number == item.number)),
-      child: PresentationEntry(
+      child: ItemEntry(
         item: item,
       ),
     );
