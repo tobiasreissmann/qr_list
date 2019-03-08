@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/bloc/itemListProvider.dart';
-import 'package:qr_list/gui/itemEntry.dart';
+import 'package:qr_list/gui/presentationEntry.dart';
 import 'package:qr_list/models/item.dart';
 
 class PresentationMode extends StatefulWidget {
   final Widget child;
+  final List<Item> sortedItemList;
 
-  PresentationMode({Key key, this.child}) : super(key: key);
+  PresentationMode({Key key, this.child, @required this.sortedItemList}) : super(key: key);
 
-  _PresentationModeState createState() => _PresentationModeState();
+  _PresentationModeState createState() => _PresentationModeState(sortedItemList: sortedItemList);
 }
 
 class _PresentationModeState extends State<PresentationMode> with TickerProviderStateMixin {
   AnimationController _backAnimationController;
   Animation _backAnimation;
+
+  final List<Item> sortedItemList;
+
+  _PresentationModeState({@required this.sortedItemList});
 
   @override
   void initState() {
@@ -37,20 +41,23 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
       children: <Widget>[
         Scaffold(
           body: Container(
-            child: StreamBuilder(
-              stream: ItemListProvider.of(context).itemListBloc.itemListStream,
-              builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
-                if (itemList.hasData) {
-                  return ListView(
-                    children: (itemList.data.toList()..sort((a, b) => a.name.compareTo(b.name)))
-                        .map((item) => _buildItemEntry(context, item))
-                        .toList(),
-                  );
-                } else {
-                  return SizedBox();
-                }
-              },
-            ),
+            child: sortedItemList.length > 0
+                ? ListView(
+                    children: sortedItemList.map((item) => _buildItemEntry(item)).toList(),
+                  )
+                : Center(
+                    heightFactor: 3,
+                    child: Container(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                        'No items available',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: Theme.of(context).disabledColor,
+                        ),
+                      ),
+                    ),
+                  ),
           ),
         ),
         AnimatedBuilder(
@@ -90,9 +97,13 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
     );
   }
 
-  Widget _buildItemEntry(BuildContext context, Item item) {
-    return ItemEntry(
-      item: item,
+  Widget _buildItemEntry(Item item) {
+    return Dismissible(
+      key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
+      onDismissed: (direction) => setState(() => sortedItemList.removeWhere((_item) => _item.number == item.number)),
+      child: PresentationEntry(
+        item: item,
+      ),
     );
   }
 }
