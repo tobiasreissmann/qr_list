@@ -31,80 +31,76 @@ class _ItemMaskState extends State<ItemMask> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
-      child: Row(children: <Widget>[
-        Flexible(
-          flex: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.4,
-            child: TextFormField(
-              keyboardAppearance: Theme.of(context).brightness,
-              controller: _nameController,
-              focusNode: _nameFocusNode,
-              scrollPadding: EdgeInsets.all(-50),
-              onFieldSubmitted: (string) {
-                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                _confirmItem(context, Item(_nameController.text, _numberController.text));
-              },
-              style: new TextStyle(
-                color: Theme.of(context).indicatorColor,
-                fontSize: 20,
-              ),
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                  gapPadding: 0,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: TextFormField(
+                keyboardAppearance: Theme.of(context).brightness,
+                controller: _nameController,
+                focusNode: _nameFocusNode,
+                scrollPadding: EdgeInsets.all(-50),
+                onFieldSubmitted: (string) {
+                  if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                  if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                  _confirmItem(context, Item(_nameController.text, _numberController.text));
+                },
+                style: new TextStyle(
+                  color: Theme.of(context).indicatorColor,
+                  fontSize: 20,
                 ),
-                labelText: AppLocalizations.of(context).item,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                    gapPadding: 0,
+                  ),
+                  labelText: AppLocalizations.of(context).item,
+                ),
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-        ),
-        Flexible(
-          flex: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.4,
-            child: TextFormField(
-              keyboardAppearance: Theme.of(context).brightness,
-              controller: _numberController,
-              focusNode: _numberFocusNode,
-              scrollPadding: EdgeInsets.all(-50),
-              onFieldSubmitted: (string) {
-                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                _confirmItem(context, Item(_nameController.text, _numberController.text));
-              },
-              style: TextStyle(
-                color: Theme.of(context).indicatorColor,
-                fontSize: 20,
-              ),
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                  gapPadding: 0,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+          ),
+          Expanded(
+            child: Container(
+              child: TextFormField(
+                keyboardAppearance: Theme.of(context).brightness,
+                controller: _numberController,
+                focusNode: _numberFocusNode,
+                scrollPadding: EdgeInsets.all(-50),
+                onFieldSubmitted: (string) {
+                  if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                  if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                  _confirmItem(context, Item(_nameController.text, _numberController.text));
+                },
+                style: TextStyle(
+                  color: Theme.of(context).indicatorColor,
+                  fontSize: 20,
                 ),
-                labelText: AppLocalizations.of(context).number,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                    gapPadding: 0,
+                  ),
+                  labelText: AppLocalizations.of(context).number,
+                ),
               ),
             ),
           ),
-        ),
-        Flexible(
-          flex: 1,
-          child: Container(
+          Container(
             alignment: Alignment.centerRight,
+            width: 48,
             child: IconButton(
               icon: Icon(Icons.playlist_add),
               color: Theme.of(context).primaryColor,
               onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
