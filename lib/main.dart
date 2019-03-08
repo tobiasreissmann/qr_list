@@ -34,20 +34,20 @@ class QRListAppState extends State<QRListApp> {
       stream: SettingsProvider.of(context).settingsBloc.darkThemeEnabled,
       initialData: false,
       builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
-        return MaterialApp(
-          localizationsDelegates: [
-            AppLocalizationsDelegate(),
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          supportedLocales: [
-            const Locale('en', 'US'), // English
-            const Locale('de', 'DE'), // German
-          ],
-          onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).title,
-          theme: darkThemeEnabled.data ? darkTheme : lightTheme,
-          home: ItemListProvider(
-            child: QRList(),
+        return ItemListProvider(
+          child: MaterialApp(
+            localizationsDelegates: [
+              AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [
+              const Locale('en', 'US'), // English
+              const Locale('de', 'DE'), // German
+            ],
+            onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).title,
+            theme: darkThemeEnabled.data ? darkTheme : lightTheme,
+            home: QRList(),
           ),
         );
       },

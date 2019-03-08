@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/bloc/settingsProvider.dart';
+import 'package:qr_list/gui/presentationMode.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -54,6 +55,12 @@ class QrListAppBar extends AppBar {
               ),
               onSelected: (Options option) {
                 switch (option) {
+                  case Options.presentationMode:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PresentationMode()),
+                    );
+                    break;
                   case Options.toggleTheme:
                     SettingsProvider.of(context).settingsBloc.toggleTheme();
                     break;
@@ -63,6 +70,31 @@ class QrListAppBar extends AppBar {
                 }
               },
               itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+                    PopupMenuItem(
+                      value: Options.presentationMode,
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 38,
+                            alignment: FractionalOffset(0, 0.5),
+                            child: Icon(
+                              Icons.present_to_all,
+                              color: Theme.of(context).disabledColor,
+                            ),
+                          ),
+                          Container(
+                            alignment: FractionalOffset(0, 0.5),
+                            child: Text(
+                              'Presentation',
+                              style: TextStyle(
+                                color: Theme.of(context).indicatorColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuDivider(),
                     PopupMenuItem(
                       value: Options.toggleTheme,
                       child: Row(
@@ -133,4 +165,4 @@ class QrListAppBar extends AppBar {
         );
 }
 
-enum Options { toggleTheme, toggleRotationLock }
+enum Options { presentationMode, toggleTheme, toggleRotationLock }

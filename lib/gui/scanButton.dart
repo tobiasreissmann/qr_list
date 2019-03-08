@@ -13,31 +13,34 @@ class ScanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-      Center(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 50),
-          child: Container(
-            child: ButtonTheme(
-              minWidth: 210,
-              height: 70,
-              buttonColor: Theme.of(context).buttonColor,
-              splashColor: Theme.of(context).splashColor,
-              child: RaisedButton(
-                elevation: 9,
-                textColor: Colors.white,
-                onPressed: () {
-                  return _readCode(context);
-                },
-                child: Text(AppLocalizations.of(context).scanButton,
-                    style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 50),
+            child: Container(
+              child: ButtonTheme(
+                minWidth: 210,
+                height: 70,
+                buttonColor: Theme.of(context).buttonColor,
+                splashColor: Theme.of(context).splashColor,
+                child: RaisedButton(
+                  elevation: 9,
+                  textColor: Colors.white,
+                  onPressed: () {
+                    return _readCode(context);
+                  },
+                  child: Text(AppLocalizations.of(context).scanButton,
+                      style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> _readCode(BuildContext context) async {

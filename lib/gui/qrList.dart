@@ -18,18 +18,23 @@ class QRList extends StatefulWidget {
 class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   final _key = GlobalKey<ScaffoldState>();
   ScrollController _listScrollController = ScrollController();
-  AnimationController animationController;
-  Animation animation;
+  AnimationController _scanAnimationController;
+  Animation _scanAnimation;
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(duration: Duration(milliseconds: 700), vsync: this);
-    animation = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-      curve: Curves.fastOutSlowIn,
-      parent: animationController,
-    ));
-    animationController.forward();
+    _scanAnimationController = AnimationController(
+      duration: Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _scanAnimation = Tween(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        curve: Curves.fastOutSlowIn,
+        parent: _scanAnimationController,
+      ),
+    );
+    _scanAnimationController.forward();
   }
 
   @override
@@ -74,10 +79,10 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           ),
         ),
         AnimatedBuilder(
-          animation: animationController,
+          animation: _scanAnimationController,
           builder: (BuildContext context, Widget child) {
             return Transform(
-              transform: Matrix4.translationValues(0.0, animation.value * 200, 0.0),
+              transform: Matrix4.translationValues(0.0, _scanAnimation.value * 200, 0.0),
               child: ScanButton(scrollController: _listScrollController),
             );
           },

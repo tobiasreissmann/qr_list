@@ -47,40 +47,40 @@ class ItemListBloc {
 
   void _addItemToItemList(Item item) {
     _itemList.add(item);
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
     databaseAddItem(item);
   }
 
   void _removeItemFromItemList(String number) {
     _backupItemList = _itemList;
     _itemList = _itemList.where((_item) => _item.number != number).toList();
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
     databaseRemoveItem(number);
   }
 
   void toggleAlphabetical() {
     _alphabetical = !_alphabetical;
     _inAlphabeticalSink.add(_alphabetical);
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
     _saveSettings();
   }
 
   void deleteItemList() {
     _backupItemList = _itemList;
     _itemList = [];
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
     databaseDeleteTable();
   }
 
   // for undo functionality
   void revertItemList() {
     _itemList = _backupItemList;
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
     databaseSaveItemList(_itemList);
   }
 
   List<Item> _sortList(List<Item> _list) {
-    return _list..sort((a, b) => a.name.compareTo(b.name));
+    return _list.toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
   int validateItem(Item item) {
@@ -111,6 +111,6 @@ class ItemListBloc {
     // getting data
     _itemList = await databaseItemList;
 
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
   }
 }
