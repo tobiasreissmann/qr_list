@@ -25,7 +25,7 @@ class ScanButton extends StatelessWidget {
               splashColor: Theme.of(context).splashColor,
               child: RaisedButton(
                 elevation: 9,
-                textColor: Theme.of(context).highlightColor,
+                textColor: Colors.white,
                 onPressed: () {
                   return _readCode(context);
                 },
