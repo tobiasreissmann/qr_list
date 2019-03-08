@@ -39,48 +39,50 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _key,
-      appBar: QrListAppBar(
-        context: context,
-        scaffoldKey: _key,
-      ),
-      body: Builder(
-        builder: (context) => Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    child: StreamBuilder(
-                      stream: ItemListProvider.of(context).itemListBloc.itemListStream,
-                      builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
-                        return ListView(
-                          children: itemList.hasData
-                              ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
-                              : [_buildPlaceholder(0)].toList()
-                            ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
-                          controller: _listScrollController,
-                        );
-                      },
+    return Stack(
+      children: <Widget>[
+        Scaffold(
+          key: _key,
+          appBar: QrListAppBar(
+            context: context,
+            scaffoldKey: _key,
+          ),
+          body: Builder(
+            builder: (context) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: StreamBuilder(
+                          stream: ItemListProvider.of(context).itemListBloc.itemListStream,
+                          builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
+                            return ListView(
+                              children: itemList.hasData
+                                  ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
+                                  : [_buildPlaceholder(0)].toList()
+                                ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
+                              controller: _listScrollController,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-      ),
-      floatingActionButton: AnimatedBuilder(
-        animation: animationController,
-        builder: (BuildContext context, Widget child) {
-          final _width = MediaQuery.of(context).size.width;
-          return Transform(
-            transform: Matrix4.translationValues(0.0, animation.value * _width, 0.0),
-            child: ScanButton(scrollController: _listScrollController),
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          ),
+        ),
+        AnimatedBuilder(
+          animation: animationController,
+          builder: (BuildContext context, Widget child) {
+            return Transform(
+              transform: Matrix4.translationValues(0.0, animation.value * 200, 0.0),
+              child: ScanButton(scrollController: _listScrollController),
+            );
+          },
+        ),
+      ],
     );
   }
 

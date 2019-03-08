@@ -16,7 +16,7 @@ class ScanButton extends StatelessWidget {
     return Column(mainAxisAlignment: MainAxisAlignment.end, children: [
       Center(
         child: Padding(
-          padding: EdgeInsets.only(bottom: 24),
+          padding: EdgeInsets.only(bottom: 50),
           child: Container(
             child: ButtonTheme(
               minWidth: 210,
@@ -25,11 +25,12 @@ class ScanButton extends StatelessWidget {
               splashColor: Theme.of(context).splashColor,
               child: RaisedButton(
                 elevation: 9,
-                textColor: Colors.white,
+                textColor: Theme.of(context).highlightColor,
                 onPressed: () {
                   return _readCode(context);
                 },
-                child: Text(AppLocalizations.of(context).scanButton, style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                child: Text(AppLocalizations.of(context).scanButton,
+                    style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
               ),
             ),
@@ -47,7 +48,8 @@ class ScanButton extends StatelessWidget {
 
       // check if scan is of invalid format
       final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
-      if (!expScan.hasMatch(scan)) return _sendFeedbackMessage(context, FeedbackType.error, AppLocalizations.of(context).unsupportedScan, 3);
+      if (!expScan.hasMatch(scan))
+        return _sendFeedbackMessage(context, FeedbackType.error, AppLocalizations.of(context).unsupportedScan, 3);
 
       // get item from scan
       final item = _readItemFromScan(scan);
@@ -56,7 +58,8 @@ class ScanButton extends StatelessWidget {
       final _itemListBloc = ItemListProvider.of(context).itemListBloc;
       switch (_itemListBloc.validateItem(item)) {
         case 0:
-          return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).undefinedScanIssue, 3);
+          return _sendFeedbackMessage(
+              context, FeedbackType.warning, AppLocalizations.of(context).undefinedScanIssue, 3);
         case 1:
           return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
         case 2:
@@ -68,7 +71,8 @@ class ScanButton extends StatelessWidget {
           _itemListBloc.alphabeticalStream.listen((alphabetical) {
             if (!alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
           });
-          return _sendFeedbackMessage(context, FeedbackType.light, '"${item.name}" ${AppLocalizations.of(context).itemAdded}', 2);
+          return _sendFeedbackMessage(
+              context, FeedbackType.light, '"${item.name}" ${AppLocalizations.of(context).itemAdded}', 2);
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied)

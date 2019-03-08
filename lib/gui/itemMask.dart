@@ -109,7 +109,6 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    FocusScope.of(context).requestFocus(new FocusNode());
     final _itemListBloc = ItemListProvider.of(context).itemListBloc;
     switch (_itemListBloc.validateItem(item)) {
       case 0:

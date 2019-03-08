@@ -9,7 +9,7 @@ ThemeData get darkTheme {
     disabledColor: Colors.grey[400],
     dividerColor: Colors.grey[400],
     errorColor: Colors.red,
-    highlightColor: Colors.black,
+    highlightColor: Colors.grey[200],
     hintColor: Colors.grey[400],
     indicatorColor: Colors.grey[200],
     primaryColor: Colors.green,
