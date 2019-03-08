@@ -15,7 +15,7 @@ class ItemListBloc {
     itemListController.close();
     _addItemController.close();
     _deleteItemController.close();
-    _alphabeticalController.close();
+    alphabeticalController.close();
   }
 
   // stream to publish the itemList
@@ -32,9 +32,9 @@ class ItemListBloc {
   StreamSink<String> get deleteItemSink => _deleteItemController.sink;
 
   // stream to publish alphabetical
-  final _alphabeticalController = BehaviorSubject<bool>();
-  StreamSink<bool> get _inAlphabeticalSink => _alphabeticalController.sink;
-  Stream<bool> get alphabeticalStream => _alphabeticalController.stream;
+  final alphabeticalController = BehaviorSubject<bool>();
+  StreamSink<bool> get _inAlphabeticalSink => alphabeticalController.sink;
+  Stream<bool> get alphabeticalStream => alphabeticalController.stream;
 
   ItemListBloc() {
     _inItemListSink.add(_itemList);

@@ -83,7 +83,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           builder: (BuildContext context, Widget child) {
             return Transform(
               transform: Matrix4.translationValues(0.0, _scanAnimation.value * 200, 0.0),
-              child: ScanButton(scrollController: _listScrollController),
+              child: ScanButton(scrollController: _listScrollController, scaffoldKey: _key),
             );
           },
         ),

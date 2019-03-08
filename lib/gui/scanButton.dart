@@ -8,7 +8,8 @@ import 'package:vibrate/vibrate.dart';
 import 'package:qr_list/models/item.dart';
 
 class ScanButton extends StatelessWidget {
-  ScanButton({@required this.scrollController});
+  ScanButton({@required this.scrollController, @required this.scaffoldKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final ScrollController scrollController;
 
   @override
@@ -71,11 +72,14 @@ class ScanButton extends StatelessWidget {
           // no problems -> add item to itemList
           _addItemToItemList(context, item);
           // scroll to bottom of list
-          _itemListBloc.alphabeticalStream.listen((alphabetical) {
-            if (!alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
-          });
+          if (!_itemListBloc.alphabeticalController.value)
+            scrollController.jumpTo(scrollController.position.maxScrollExtent);
           return _sendFeedbackMessage(
-              context, FeedbackType.light, '"${item.name}" ${AppLocalizations.of(context).itemAdded}', 2);
+            context,
+            FeedbackType.light,
+            '"${item.name}" ${AppLocalizations.of(context).itemAdded}',
+            2,
+          );
       }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied)
@@ -87,11 +91,13 @@ class ScanButton extends StatelessWidget {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
       BuildContext context, FeedbackType feedbacktype, String feedbackMessage, int duration) {
     Vibrate.feedback(feedbacktype);
-    Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(feedbackMessage),
-      duration: Duration(seconds: duration),
-    ));
+    scaffoldKey.currentState.removeCurrentSnackBar();
+    return scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text(feedbackMessage),
+        duration: Duration(seconds: duration),
+      ),
+    );
   }
 
   Item _readItemFromScan(String scan) {
@@ -100,14 +106,16 @@ class ScanButton extends StatelessWidget {
     final RegExp expNameKg = new RegExp(r"^.*\skg\s");
     final RegExp expNameBund = new RegExp(r"^.*\sBund\s");
     final RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
+    final RegExp expNameSchale = new RegExp(r"^.*\sSchale\s");
 
-    String name;
+    String name = '';
     String number = expNumber.stringMatch(scan);
 
     // find item name (differences between diffrent item types)
     if (expNameKg.hasMatch(scan)) name = scan.split(" kg ")[1];
     if (expNameBund.hasMatch(scan)) name = scan.split(" Bund ")[1];
     if (expNameStueck.hasMatch(scan)) name = scan.split(" Stück ")[1];
+    if (expNameSchale.hasMatch(scan)) name = scan.split(" Schale ")[1];
 
     return Item(name, number);
   }
