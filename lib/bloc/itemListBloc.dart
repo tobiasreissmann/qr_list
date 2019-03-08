@@ -12,16 +12,16 @@ class ItemListBloc {
   List<Item> _backupItemList = [];
 
   void dispose() {
-    _itemListController.close();
+    itemListController.close();
     _addItemController.close();
     _deleteItemController.close();
     _alphabeticalController.close();
   }
 
   // stream to publish the itemList
-  final _itemListController = BehaviorSubject<List<Item>>();
-  StreamSink<List<Item>> get _inItemListSink => _itemListController.sink;
-  Stream<List<Item>> get itemListStream => _itemListController.stream;
+  final itemListController = BehaviorSubject<List<Item>>();
+  StreamSink<List<Item>> get _inItemListSink => itemListController.sink;
+  Stream<List<Item>> get itemListStream => itemListController.stream;
 
   // stream to add item
   final _addItemController = StreamController<Item>();

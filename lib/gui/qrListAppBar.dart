@@ -3,7 +3,6 @@ import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/bloc/settingsProvider.dart';
 import 'package:qr_list/gui/presentationMode.dart';
 import 'package:qr_list/locale/locales.dart';
-import 'package:qr_list/models/item.dart';
 import 'package:vibrate/vibrate.dart';
 
 class QrListAppBar extends AppBar {
@@ -57,18 +56,17 @@ class QrListAppBar extends AppBar {
               onSelected: (Options option) {
                 switch (option) {
                   case Options.presentationMode:
-                    ItemListProvider.of(context).itemListBloc.itemListStream.listen(
-                          (List<Item> itemList) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return PresentationMode(
-                                      sortedItemList: itemList.toList()..sort((a, b) => a.name.compareTo(b.name)),
-                                    );
-                                  },
-                                ),
-                              ),
-                        );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return PresentationMode(
+                            sortedItemList: ItemListProvider.of(context).itemListBloc.itemListController.value.toList()
+                              ..sort((a, b) => a.name.compareTo(b.name)),
+                          );
+                        },
+                      ),
+                    );
                     break;
                   case Options.toggleTheme:
                     SettingsProvider.of(context).settingsBloc.toggleTheme();
