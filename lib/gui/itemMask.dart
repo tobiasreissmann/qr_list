@@ -91,8 +91,6 @@ class _ItemMaskState extends State<ItemMask> {
             ),
           ),
           Container(
-            alignment: Alignment.centerRight,
-            width: 48,
             child: IconButton(
               icon: Icon(Icons.playlist_add),
               color: Theme.of(context).primaryColor,
