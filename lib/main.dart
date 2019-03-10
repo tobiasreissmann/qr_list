@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,7 @@ import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/themes.dart';
 
 main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   runApp(
     SettingsProvider(
       child: QRListApp(),

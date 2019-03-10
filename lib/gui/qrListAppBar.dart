@@ -11,7 +11,7 @@ class QrListAppBar extends AppBar {
 
   QrListAppBar({this.context, this.scaffoldKey})
       : super(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).bottomAppBarColor,
           brightness: Theme.of(context).brightness,
           elevation: 0.0,
           title: Text(
@@ -39,11 +39,18 @@ class QrListAppBar extends AppBar {
                 scaffoldKey.currentState.removeCurrentSnackBar();
                 scaffoldKey.currentState.showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context).deleteItemList),
+                    content: Text(
+                      AppLocalizations.of(context).deleteItemList,
+                      style: TextStyle(
+                        color: Theme.of(context).indicatorColor,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                     action: new SnackBarAction(
                       label: AppLocalizations.of(context).undo,
                       onPressed: () => ItemListProvider.of(context).itemListBloc.revertItemList(),
                     ),
+                    backgroundColor: Theme.of(context).cardColor,
                   ),
                 );
               },

@@ -18,6 +18,8 @@ ThemeData get darkTheme {
     textSelectionColor: Colors.green,
     textSelectionHandleColor: Colors.green,
     toggleableActiveColor: Colors.green,
+    bottomAppBarColor: Colors.black54,
+    cardColor: Colors.grey[900],
   );
 }
 
@@ -39,5 +41,7 @@ ThemeData get lightTheme {
     textSelectionColor: Colors.green,
     textSelectionHandleColor: Colors.green,
     toggleableActiveColor: Colors.green,
+    bottomAppBarColor: Colors.white70,
+    cardColor: Colors.grey[50],
   );
 }

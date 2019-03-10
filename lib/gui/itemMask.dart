@@ -130,8 +130,15 @@ class _ItemMaskState extends State<ItemMask> {
     Vibrate.feedback(feedbacktype);
     Scaffold.of(context).removeCurrentSnackBar();
     return Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(feedbackMessage),
+      content: Text(
+        feedbackMessage,
+        style: TextStyle(
+          color: Theme.of(context).indicatorColor,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
       duration: Duration(seconds: duration),
+      backgroundColor: Theme.of(context).cardColor,
     ));
   }
 }

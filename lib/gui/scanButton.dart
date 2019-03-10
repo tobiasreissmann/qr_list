@@ -94,8 +94,15 @@ class ScanButton extends StatelessWidget {
     scaffoldKey.currentState.removeCurrentSnackBar();
     return scaffoldKey.currentState.showSnackBar(
       SnackBar(
-        content: Text(feedbackMessage),
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(
+            color: Theme.of(context).indicatorColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         duration: Duration(seconds: duration),
+        backgroundColor: Theme.of(context).cardColor,
       ),
     );
   }

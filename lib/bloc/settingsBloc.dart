@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:qr_list/themes.dart';
-
 class SettingsBloc {
   bool _darkThemeEnabled = false;
   bool _rotationLockEnabled = false;
@@ -30,10 +28,6 @@ class SettingsBloc {
 
   void toggleTheme() {
     _darkThemeEnabled = !_darkThemeEnabled;
-    _darkThemeEnabled
-        ? SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: darkTheme.scaffoldBackgroundColor))
-        : SystemChrome.setSystemUIOverlayStyle(
-            SystemUiOverlayStyle(statusBarColor: lightTheme.scaffoldBackgroundColor));
     _inDarkThemeSink.add(_darkThemeEnabled);
     _saveSettings();
   }
@@ -60,12 +54,6 @@ class SettingsBloc {
     _rotationLockEnabled = prefs.getBool('rotationLockEnabled') ?? false;
     _inDarkThemeSink.add(_darkThemeEnabled);
     _inRotationLockSink.add(_rotationLockEnabled);
-
-    // need to set white statusbar manual (not system standard in Android)
-    _darkThemeEnabled
-        ? SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: darkTheme.scaffoldBackgroundColor))
-        : SystemChrome.setSystemUIOverlayStyle(
-            SystemUiOverlayStyle(statusBarColor: lightTheme.scaffoldBackgroundColor));
 
     // set orientation setting
     _rotationLockEnabled

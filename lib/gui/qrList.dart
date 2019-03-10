@@ -48,30 +48,38 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
       children: <Widget>[
         Scaffold(
           key: _key,
-          appBar: QrListAppBar(
-            context: context,
-            scaffoldKey: _key,
-          ),
           body: Builder(
-            builder: (context) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        child: StreamBuilder(
-                          stream: ItemListProvider.of(context).itemListBloc.itemListStream,
-                          builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
-                            return ListView(
-                              children: itemList.hasData
-                                  ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
-                                  : [_buildPlaceholder(0)].toList()
-                                ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
-                              controller: _listScrollController,
-                            );
-                          },
+            builder: (context) => Stack(
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: StreamBuilder(
+                              stream: ItemListProvider.of(context).itemListBloc.itemListStream,
+                              builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
+                                return ListView(
+                                  children: <Widget>[_buildPlaceholder(38)]
+                                    ..addAll(itemList.hasData
+                                        ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
+                                        : [_buildPlaceholder(0)].toList())
+                                    ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
+                                  controller: _listScrollController,
+                                );
+                              },
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    Container(
+                      height: 64,
+                      child: QrListAppBar(
+                        context: context,
+                        scaffoldKey: _key,
                       ),
                     ),
                   ],
@@ -117,11 +125,18 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     _key.currentState.removeCurrentSnackBar();
     _key.currentState.showSnackBar(
       SnackBar(
-        content: Text(feedbackMessage),
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(
+            color: Theme.of(context).indicatorColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         action: new SnackBarAction(
           label: AppLocalizations.of(context).undo,
           onPressed: () => ItemListProvider.of(context).itemListBloc.revertItemList(),
         ),
+        backgroundColor: Theme.of(context).cardColor,
       ),
     );
   }
