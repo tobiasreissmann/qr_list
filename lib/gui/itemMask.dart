@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/models/itemValidity.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
@@ -94,15 +95,14 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    final _itemListBloc = ItemListProvider.of(context).bloc;
-    switch (_itemListBloc.validateItem(item)) {
-      case 0:
+    switch (ItemListProvider.of(context).bloc.validateItem(item)) {
+      case ItemValidity.emptyFields:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).emptyFields, 3);
-      case 1:
+      case ItemValidity.itemGiven:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
-      case 2:
+      case ItemValidity.numberGiven:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
-      case 3:
+      case ItemValidity.valid:
         _addItemToItemList(context, item);
         return null;
       default:
@@ -111,7 +111,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).bloc.addItemSink.add(item);
+    ItemListProvider.of(context).bloc.addItem.add(item);
     _nameController.clear();
     _numberController.clear();
   }

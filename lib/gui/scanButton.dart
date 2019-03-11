@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/models/itemValidity.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
@@ -62,19 +63,18 @@ class ScanButton extends StatelessWidget {
       // check item validitys
       final _itemListBloc = ItemListProvider.of(context).bloc;
       switch (_itemListBloc.validateItem(item)) {
-        case 0:
+        case ItemValidity.emptyFields:
           return _sendFeedbackMessage(
               context, FeedbackType.warning, AppLocalizations.of(context).undefinedScanIssue, 3);
-        case 1:
+        case ItemValidity.itemGiven:
           return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
-        case 2:
+        case ItemValidity.numberGiven:
           return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
-        case 3:
+        case ItemValidity.valid:
           // no problems -> add item to itemList
           _addItemToItemList(context, item);
           // scroll to bottom of list
-          if (!_itemListBloc.alphabeticalController.value)
-            scrollController.jumpTo(scrollController.position.maxScrollExtent);
+          if (!_itemListBloc.alphabetical) scrollController.jumpTo(scrollController.position.maxScrollExtent);
           return _sendFeedbackMessage(
             context,
             FeedbackType.light,
@@ -129,6 +129,6 @@ class ScanButton extends StatelessWidget {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).bloc.addItemSink.add(item);
+    ItemListProvider.of(context).bloc.addItem.add(item);
   }
 }
