@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:qr_list/gui/itemEntry.dart';
 import 'package:qr_list/models/item.dart';
 
@@ -23,7 +22,6 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     _backAnimationController = AnimationController(
       duration: Duration(milliseconds: 700),
       vsync: this,
@@ -39,7 +37,6 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 
