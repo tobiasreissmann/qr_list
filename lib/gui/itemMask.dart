@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
-import 'package:qr_list/models/itemValidity.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
+import 'package:qr_list/models/itemValidity.dart';
 
 class ItemMask extends StatefulWidget {
   @override
@@ -14,8 +14,8 @@ class ItemMask extends StatefulWidget {
 }
 
 class _ItemMaskState extends State<ItemMask> {
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _numberController = new TextEditingController();
+  TextEditingController _nameTextController = new TextEditingController();
+  TextEditingController _numberTextController = new TextEditingController();
   FocusNode _nameFocusNode = new FocusNode();
   FocusNode _numberFocusNode = new FocusNode();
 
@@ -29,13 +29,13 @@ class _ItemMaskState extends State<ItemMask> {
             child: Container(
               child: TextFormField(
                 keyboardAppearance: Theme.of(context).brightness,
-                controller: _nameController,
+                controller: _nameTextController,
                 focusNode: _nameFocusNode,
-                scrollPadding: EdgeInsets.all(-50),
+                scrollPadding: const EdgeInsets.all(-50),
                 onFieldSubmitted: (string) {
-                  if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                  if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                  _confirmItem(context, Item(_nameController.text, _numberController.text));
+                  if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                  if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                  _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
                 },
                 style: new TextStyle(
                   color: Theme.of(context).indicatorColor,
@@ -59,13 +59,13 @@ class _ItemMaskState extends State<ItemMask> {
             child: Container(
               child: TextFormField(
                 keyboardAppearance: Theme.of(context).brightness,
-                controller: _numberController,
+                controller: _numberTextController,
                 focusNode: _numberFocusNode,
-                scrollPadding: EdgeInsets.all(-50),
+                scrollPadding: const EdgeInsets.all(-50),
                 onFieldSubmitted: (string) {
-                  if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                  if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                  _confirmItem(context, Item(_nameController.text, _numberController.text));
+                  if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                  if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                  _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
                 },
                 style: TextStyle(
                   color: Theme.of(context).indicatorColor,
@@ -86,7 +86,7 @@ class _ItemMaskState extends State<ItemMask> {
             child: IconButton(
               icon: Icon(Icons.playlist_add),
               color: Theme.of(context).primaryColor,
-              onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
+              onPressed: () => _confirmItem(context, Item(_nameTextController.text, _numberTextController.text)),
             ),
           ),
         ],
@@ -112,8 +112,8 @@ class _ItemMaskState extends State<ItemMask> {
 
   void _addItemToItemList(BuildContext context, Item item) {
     ItemListProvider.of(context).bloc.addItem.add(item);
-    _nameController.clear();
-    _numberController.clear();
+    _nameTextController.clear();
+    _numberTextController.clear();
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
@@ -135,8 +135,8 @@ class _ItemMaskState extends State<ItemMask> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _numberController.dispose();
+    _nameTextController.dispose();
+    _numberTextController.dispose();
     _nameFocusNode.dispose();
     _numberFocusNode.dispose();
     super.dispose();

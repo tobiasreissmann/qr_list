@@ -4,7 +4,7 @@ import 'package:qr_list/models/item.dart';
 
 class ItemEntry extends StatelessWidget {
   ItemEntry({@required this.item});
-  
+
   final Item item;
 
   @override
@@ -15,19 +15,16 @@ class ItemEntry extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Flexible(
-                flex: 0,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Text(
-                    item.name,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Theme.of(context).indicatorColor,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.left,
+              Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  item.name,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Theme.of(context).indicatorColor,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.left,
                 ),
               ),
               Flexible(
@@ -45,7 +42,7 @@ class ItemEntry extends StatelessWidget {
               ),
             ],
           ),
-          Divider()
+          Divider(),
         ],
       ),
     );

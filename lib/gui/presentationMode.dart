@@ -56,7 +56,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
                 : Center(
                     heightFactor: 3,
                     child: Container(
-                      padding: EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(24),
                       child: Text(
                         AppLocalizations.of(context).noItems,
                         style: TextStyle(
@@ -78,7 +78,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
                 children: <Widget>[
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 50),
+                      padding: const EdgeInsets.only(bottom: 50),
                       child: Container(
                         child: ButtonTheme(
                           minWidth: 70,

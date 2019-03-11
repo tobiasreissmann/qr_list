@@ -21,7 +21,7 @@ class ScanButton extends StatelessWidget {
       children: [
         Center(
           child: Padding(
-            padding: EdgeInsets.only(bottom: 50),
+            padding: const EdgeInsets.only(bottom: 50),
             child: Container(
               child: ButtonTheme(
                 minWidth: 200,
