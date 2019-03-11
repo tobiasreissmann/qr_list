@@ -7,33 +7,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsBloc {
   SettingsBloc() {
     _loadSettings();
-    _inDarkThemeSink.add(_darkThemeEnabled);
-    _inRotationLockSink.add(_rotationLockEnabled);
   }
-
-  bool _darkThemeEnabled = false;
-  bool _rotationLockEnabled = false;
 
   final _darkThemeController = BehaviorSubject<bool>();
   StreamSink<bool> get _inDarkThemeSink => _darkThemeController.sink;
-  Stream<bool> get darkThemeEnabled => _darkThemeController.stream;
+  Stream<bool> get darkThemeEnabledStream => _darkThemeController.stream;
+  bool get _darkThemeEnabled => _darkThemeController.value;
 
   final _rotationLockController = BehaviorSubject<bool>();
   StreamSink<bool> get _inRotationLockSink => _rotationLockController.sink;
-  Stream<bool> get rotationLockEnabled => _rotationLockController.stream;
+  Stream<bool> get rotationLockEnabledStream => _rotationLockController.stream;
+  bool get _rotationLockEnabled => _rotationLockController.value;
 
   void toggleTheme() {
-    _darkThemeEnabled = !_darkThemeEnabled;
-    _inDarkThemeSink.add(_darkThemeEnabled);
+    _inDarkThemeSink.add(!_darkThemeEnabled);
     _saveSettings();
   }
 
   void toggleRotationLock() {
-    _rotationLockEnabled = !_rotationLockEnabled;
+    _inRotationLockSink.add(!_rotationLockEnabled);
     _rotationLockEnabled
         ? SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
         : SystemChrome.setPreferredOrientations([]);
-    _inRotationLockSink.add(_rotationLockEnabled);
     _saveSettings();
   }
 
@@ -46,10 +41,8 @@ class SettingsBloc {
   void _loadSettings() async {
     // getting settings
     final prefs = await SharedPreferences.getInstance();
-    _darkThemeEnabled = prefs.getBool('darkThemeEnabled') ?? false;
-    _rotationLockEnabled = prefs.getBool('rotationLockEnabled') ?? false;
-    _inDarkThemeSink.add(_darkThemeEnabled);
-    _inRotationLockSink.add(_rotationLockEnabled);
+    _inDarkThemeSink.add(prefs.getBool('darkThemeEnabled') ?? false);
+    _inRotationLockSink.add(prefs.getBool('rotationLockEnabled') ?? false);
 
     // set orientation setting
     _rotationLockEnabled

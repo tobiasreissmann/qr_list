@@ -9,8 +9,6 @@ import 'package:qr_list/services/database.service.dart';
 
 class ItemListBloc {
   ItemListBloc() {
-    _inItemListSink.add([]);
-    _inAlphabeticalSink.add(false);
     _loadData();
 
     _addItemStream.listen(_addItemToItemList);

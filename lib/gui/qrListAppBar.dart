@@ -113,7 +113,7 @@ class QrListAppBar extends AppBar {
                       child: Row(
                         children: <Widget>[
                           StreamBuilder<Object>(
-                            stream: SettingsProvider.of(context).bloc.darkThemeEnabled,
+                            stream: SettingsProvider.of(context).bloc.darkThemeEnabledStream,
                             initialData: false,
                             builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
                               return Container(
@@ -145,7 +145,7 @@ class QrListAppBar extends AppBar {
                       child: Row(
                         children: <Widget>[
                           StreamBuilder<Object>(
-                            stream: SettingsProvider.of(context).bloc.rotationLockEnabled,
+                            stream: SettingsProvider.of(context).bloc.rotationLockEnabledStream,
                             initialData: false,
                             builder: (BuildContext context, AsyncSnapshot rotationLockEnabled) {
                               return Container(

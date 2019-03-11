@@ -28,7 +28,7 @@ class QRListAppState extends State<QRListApp> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: SettingsProvider.of(context).bloc.darkThemeEnabled,
+      stream: SettingsProvider.of(context).bloc.darkThemeEnabledStream,
       initialData: false,
       builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
         return ItemListProvider(
