@@ -62,7 +62,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                               stream: ItemListProvider.of(context).itemListBloc.itemListStream,
                               builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
                                 return ListView(
-                                  children: <Widget>[_buildPlaceholder(38)]
+                                  children: <Widget>[_buildPlaceholder(45)]
                                     ..addAll(itemList.hasData
                                         ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
                                         : [_buildPlaceholder(0)].toList())
