@@ -88,5 +88,29 @@
     "description": "Feedback when item was added.",
     "type": "text",
     "placeholders": {}
+  },
+  "noItems": "no items available",
+  "@unsupportedScan": {
+    "description": "Feedback on presentation mode when no items in list.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "rotationLock": "Rotation Lock",
+  "@unsupportedScan": {
+    "description": "Describtion for rotation lock option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "darkMode": "Dark Theme",
+  "@unsupportedScan": {
+    "description": "Describtion for dark mode option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "presentationMode": "Present",
+  "@unsupportedScan": {
+    "description": "Describtion for presentation mode option.",
+    "type": "text",
+    "placeholders": {}
   }
 }

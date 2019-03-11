@@ -1,15 +1,15 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:qr_list/gui/qrListAppBar.dart';
-import 'package:qr_list/locale/locales.dart';
-import 'package:vibrate/vibrate.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
+import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/gui/itemEntry.dart';
 import 'package:qr_list/gui/itemMask.dart';
+import 'package:qr_list/gui/qrListAppBar.dart';
 import 'package:qr_list/gui/scanButton.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class QRList extends StatefulWidget {
@@ -64,7 +64,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                               stream: ItemListProvider.of(context).itemListBloc.itemListStream,
                               builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
                                 return ListView(
-                                  children: <Widget>[_buildPlaceholder(45)]
+                                  children: <Widget>[_buildPlaceholder(65)]
                                     ..addAll(itemList.hasData
                                         ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
                                         : [_buildPlaceholder(0)].toList())
@@ -78,9 +78,9 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                       ],
                     ),
                     BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                      filter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5),
                       child: Container(
-                        height: 75,
+                        height: 80,
                         child: QrListAppBar(
                           context: context,
                           scaffoldKey: _key,
@@ -106,7 +106,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
 
   Widget _buildItemEntry(BuildContext context, Item item) {
     return Dismissible(
-      key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
+      key: Key(item.number),
       onDismissed: (direction) => setState(() => _deleteItem(context, item)),
       child: ItemEntry(
         item: item,

@@ -1,10 +1,10 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_list/bloc/itemListProvider.dart';
-import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 
+import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class ScanButton extends StatelessWidget {
@@ -22,7 +22,7 @@ class ScanButton extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 50),
             child: Container(
               child: ButtonTheme(
-                minWidth: 210,
+                minWidth: 200,
                 height: 70,
                 buttonColor: Theme.of(context).buttonColor,
                 splashColor: Theme.of(context).splashColor,

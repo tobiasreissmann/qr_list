@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:qr_list/bloc/settingsBloc.dart';
 
 class SettingsProvider extends InheritedWidget {

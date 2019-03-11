@@ -88,5 +88,29 @@
     "description": "Feedback when item was added.",
     "type": "text",
     "placeholders": {}
+  },
+  "noItems": "keine Artikel verfügbar",
+  "@unsupportedScan": {
+    "description": "Feedback on presentation mode when no items in list.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "rotationLock": "Rotation sperren",
+  "@unsupportedScan": {
+    "description": "Describtion for rotation lock option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "darkMode": "Dunkles Design",
+  "@unsupportedScan": {
+    "description": "Describtion for dark mode option.",
+    "type": "text",
+    "placeholders": {}
+  },
+  "presentationMode": "Präsentieren",
+  "@unsupportedScan": {
+    "description": "Describtion for presentation mode option.",
+    "type": "text",
+    "placeholders": {}
   }
 }

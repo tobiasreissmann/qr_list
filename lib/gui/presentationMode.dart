@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
 import 'package:qr_list/gui/itemEntry.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class PresentationMode extends StatefulWidget {
@@ -56,7 +58,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
                     child: Container(
                       padding: EdgeInsets.all(24),
                       child: Text(
-                        'No items available',
+                        AppLocalizations.of(context).noItems,
                         style: TextStyle(
                           fontSize: 20.0,
                           color: Theme.of(context).disabledColor,
@@ -100,7 +102,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
           },
         ),
         BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+          filter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5),
           child: Container(
             color: statusBarColor,
             height: 24,

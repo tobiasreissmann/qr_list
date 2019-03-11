@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class ItemMask extends StatefulWidget {

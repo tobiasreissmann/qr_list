@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:vibrate/vibrate.dart';
+
 import 'package:qr_list/bloc/itemListProvider.dart';
 import 'package:qr_list/bloc/settingsProvider.dart';
 import 'package:qr_list/gui/presentationMode.dart';
 import 'package:qr_list/locale/locales.dart';
-import 'package:vibrate/vibrate.dart';
 
 class QrListAppBar extends AppBar {
   final BuildContext context;
@@ -100,7 +101,7 @@ class QrListAppBar extends AppBar {
                           Container(
                             alignment: FractionalOffset(0, 0.5),
                             child: Text(
-                              'Presentation',
+                              AppLocalizations.of(context).presentationMode,
                               style: TextStyle(
                                 color: Theme.of(context).indicatorColor,
                               ),
@@ -133,7 +134,7 @@ class QrListAppBar extends AppBar {
                           Container(
                             alignment: FractionalOffset(0, 0.5),
                             child: Text(
-                              'Dark Mode',
+                              AppLocalizations.of(context).darkMode,
                               style: TextStyle(
                                 color: Theme.of(context).indicatorColor,
                               ),
@@ -165,7 +166,7 @@ class QrListAppBar extends AppBar {
                           Container(
                             alignment: FractionalOffset(0, 0.5),
                             child: Text(
-                              'Lock Rotation',
+                              AppLocalizations.of(context).rotationLock,
                               style: TextStyle(
                                 color: Theme.of(context).indicatorColor,
                               ),
