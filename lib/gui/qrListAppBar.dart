@@ -70,6 +70,7 @@ class QrListAppBar extends AppBar {
                           return PresentationMode(
                             sortedItemList: ItemListProvider.of(context).itemListBloc.itemListController.value.toList()
                               ..sort((a, b) => a.name.compareTo(b.name)),
+                            statusBarColor: Theme.of(context).bottomAppBarColor,
                           );
                         },
                       ),

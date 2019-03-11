@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:qr_list/gui/qrListAppBar.dart';
 import 'package:qr_list/locale/locales.dart';
@@ -75,11 +77,14 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                         ),
                       ],
                     ),
-                    Container(
-                      height: 64,
-                      child: QrListAppBar(
-                        context: context,
-                        scaffoldKey: _key,
+                    BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                      child: Container(
+                        height: 75,
+                        child: QrListAppBar(
+                          context: context,
+                          scaffoldKey: _key,
+                        ),
                       ),
                     ),
                   ],

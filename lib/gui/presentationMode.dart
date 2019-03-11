@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:qr_list/gui/itemEntry.dart';
 import 'package:qr_list/models/item.dart';
@@ -5,10 +7,13 @@ import 'package:qr_list/models/item.dart';
 class PresentationMode extends StatefulWidget {
   final Widget child;
   final List<Item> sortedItemList;
+  final Color statusBarColor;
 
-  PresentationMode({Key key, this.child, @required this.sortedItemList}) : super(key: key);
+  PresentationMode({Key key, this.child, @required this.sortedItemList, @required this.statusBarColor})
+      : super(key: key);
 
-  _PresentationModeState createState() => _PresentationModeState(sortedItemList: sortedItemList);
+  _PresentationModeState createState() =>
+      _PresentationModeState(sortedItemList: sortedItemList, statusBarColor: statusBarColor);
 }
 
 class _PresentationModeState extends State<PresentationMode> with TickerProviderStateMixin {
@@ -16,8 +21,9 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
   Animation _backAnimation;
 
   final List<Item> sortedItemList;
+  final Color statusBarColor;
 
-  _PresentationModeState({@required this.sortedItemList});
+  _PresentationModeState({@required this.sortedItemList, @required this.statusBarColor});
 
   @override
   void initState() {
@@ -33,11 +39,6 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
       ),
     );
     _backAnimationController.forward();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -97,6 +98,13 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
               ),
             );
           },
+        ),
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+          child: Container(
+            color: statusBarColor,
+            height: 24,
+          ),
         ),
       ],
     );
