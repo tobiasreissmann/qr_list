@@ -102,7 +102,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
           },
         ),
         BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5),
+          filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
           child: Container(
             color: statusBarColor,
             height: 24,

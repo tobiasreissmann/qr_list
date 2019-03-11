@@ -72,7 +72,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                       ],
                     ),
                     BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3.5, sigmaY: 3.5),
+                      filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                       child: Container(
                         height: 80,
                         child: QrListAppBar(
