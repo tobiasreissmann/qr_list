@@ -26,14 +26,9 @@ class QRListApp extends StatefulWidget {
 
 class QRListAppState extends State<QRListApp> {
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: SettingsProvider.of(context).settingsBloc.darkThemeEnabled,
+      stream: SettingsProvider.of(context).bloc.darkThemeEnabled,
       initialData: false,
       builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
         return ItemListProvider(
@@ -54,5 +49,11 @@ class QRListAppState extends State<QRListApp> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    SettingsProvider.of(context).bloc.close();
   }
 }

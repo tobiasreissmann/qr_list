@@ -5,6 +5,12 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsBloc {
+  SettingsBloc() {
+    _loadSettings();
+    _inDarkThemeSink.add(_darkThemeEnabled);
+    _inRotationLockSink.add(_rotationLockEnabled);
+  }
+
   bool _darkThemeEnabled = false;
   bool _rotationLockEnabled = false;
 
@@ -15,17 +21,6 @@ class SettingsBloc {
   final _rotationLockController = BehaviorSubject<bool>();
   StreamSink<bool> get _inRotationLockSink => _rotationLockController.sink;
   Stream<bool> get rotationLockEnabled => _rotationLockController.stream;
-
-  void dispose() {
-    _darkThemeController.close();
-    _rotationLockController.close();
-  }
-
-  SettingsBloc() {
-    _loadSettings();
-    _inDarkThemeSink.add(_darkThemeEnabled);
-    _inRotationLockSink.add(_rotationLockEnabled);
-  }
 
   void toggleTheme() {
     _darkThemeEnabled = !_darkThemeEnabled;
@@ -60,5 +55,10 @@ class SettingsBloc {
     _rotationLockEnabled
         ? SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
         : SystemChrome.setPreferredOrientations([]);
+  }
+
+  void close() {
+    _darkThemeController.close();
+    _rotationLockController.close();
   }
 }

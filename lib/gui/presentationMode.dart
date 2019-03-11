@@ -7,25 +7,25 @@ import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class PresentationMode extends StatefulWidget {
-  final Widget child;
+  PresentationMode({Key key, @required this.sortedItemList, @required this.statusBarColor}) : super(key: key);
+
   final List<Item> sortedItemList;
   final Color statusBarColor;
 
-  PresentationMode({Key key, this.child, @required this.sortedItemList, @required this.statusBarColor})
-      : super(key: key);
-
-  _PresentationModeState createState() =>
-      _PresentationModeState(sortedItemList: sortedItemList, statusBarColor: statusBarColor);
+  _PresentationModeState createState() => _PresentationModeState(
+        sortedItemList: sortedItemList,
+        statusBarColor: statusBarColor,
+      );
 }
 
 class _PresentationModeState extends State<PresentationMode> with TickerProviderStateMixin {
-  AnimationController _backAnimationController;
-  Animation _backAnimation;
+  _PresentationModeState({@required this.sortedItemList, @required this.statusBarColor});
 
   final List<Item> sortedItemList;
   final Color statusBarColor;
 
-  _PresentationModeState({@required this.sortedItemList, @required this.statusBarColor});
+  AnimationController _backAnimationController;
+  Animation _backAnimation;
 
   @override
   void initState() {
@@ -114,7 +114,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
 
   Widget _buildItemEntry(Item item) {
     return Dismissible(
-      key: Key(item.number), // INFO using item.number instead of item.name because key must be unique
+      key: Key(item.number),
       onDismissed: (direction) => setState(() => sortedItemList.removeWhere((_item) => _item.number == item.number)),
       child: ItemEntry(
         item: item,

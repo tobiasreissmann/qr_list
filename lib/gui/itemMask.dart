@@ -19,15 +19,6 @@ class _ItemMaskState extends State<ItemMask> {
   FocusNode _numberFocusNode = new FocusNode();
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _numberController.dispose();
-    _nameFocusNode.dispose();
-    _numberFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
@@ -103,7 +94,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    final _itemListBloc = ItemListProvider.of(context).itemListBloc;
+    final _itemListBloc = ItemListProvider.of(context).bloc;
     switch (_itemListBloc.validateItem(item)) {
       case 0:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).emptyFields, 3);
@@ -120,7 +111,7 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).itemListBloc.addItemSink.add(item);
+    ItemListProvider.of(context).bloc.addItemSink.add(item);
     _nameController.clear();
     _numberController.clear();
   }
@@ -140,5 +131,14 @@ class _ItemMaskState extends State<ItemMask> {
       duration: Duration(seconds: duration),
       backgroundColor: Theme.of(context).cardColor,
     ));
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _numberController.dispose();
+    _nameFocusNode.dispose();
+    _numberFocusNode.dispose();
+    super.dispose();
   }
 }

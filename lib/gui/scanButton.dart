@@ -9,6 +9,7 @@ import 'package:qr_list/models/item.dart';
 
 class ScanButton extends StatelessWidget {
   ScanButton({@required this.scrollController, @required this.scaffoldKey});
+
   final GlobalKey<ScaffoldState> scaffoldKey;
   final ScrollController scrollController;
 
@@ -59,7 +60,7 @@ class ScanButton extends StatelessWidget {
       final item = _readItemFromScan(scan);
 
       // check item validitys
-      final _itemListBloc = ItemListProvider.of(context).itemListBloc;
+      final _itemListBloc = ItemListProvider.of(context).bloc;
       switch (_itemListBloc.validateItem(item)) {
         case 0:
           return _sendFeedbackMessage(
@@ -128,6 +129,6 @@ class ScanButton extends StatelessWidget {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).itemListBloc.addItemSink.add(item);
+    ItemListProvider.of(context).bloc.addItemSink.add(item);
   }
 }

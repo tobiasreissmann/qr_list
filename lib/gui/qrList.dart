@@ -39,12 +39,6 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     _scanAnimationController.forward();
   }
 
-  @override
-  dispose() {
-    ItemListProvider.of(context).itemListBloc.dispose();
-    super.dispose();
-  }
-
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
@@ -61,7 +55,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
                         Expanded(
                           child: Container(
                             child: StreamBuilder(
-                              stream: ItemListProvider.of(context).itemListBloc.itemListStream,
+                              stream: ItemListProvider.of(context).bloc.itemListStream,
                               builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
                                 return ListView(
                                   children: <Widget>[_buildPlaceholder(65)]
@@ -121,7 +115,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   }
 
   void _deleteItem(BuildContext context, Item item) {
-    ItemListProvider.of(context).itemListBloc.deleteItemSink.add(item.number);
+    ItemListProvider.of(context).bloc.deleteItemSink.add(item.number);
     _sendDeleteFeedbackMessage(context, '"${item.name}" ${AppLocalizations.of(context).itemDeleted}');
   }
 
@@ -139,10 +133,16 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
         ),
         action: new SnackBarAction(
           label: AppLocalizations.of(context).undo,
-          onPressed: () => ItemListProvider.of(context).itemListBloc.revertItemList(),
+          onPressed: () => ItemListProvider.of(context).bloc.revertItemList(),
         ),
         backgroundColor: Theme.of(context).cardColor,
       ),
     );
+  }
+
+  @override
+  dispose() {
+    ItemListProvider.of(context).bloc.close();
+    super.dispose();
   }
 }

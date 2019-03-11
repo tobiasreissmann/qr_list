@@ -7,9 +7,6 @@ import 'package:qr_list/gui/presentationMode.dart';
 import 'package:qr_list/locale/locales.dart';
 
 class QrListAppBar extends AppBar {
-  final BuildContext context;
-  final GlobalKey<ScaffoldState> scaffoldKey;
-
   QrListAppBar({this.context, this.scaffoldKey})
       : super(
           backgroundColor: Theme.of(context).bottomAppBarColor,
@@ -21,13 +18,13 @@ class QrListAppBar extends AppBar {
           ),
           actions: <Widget>[
             StreamBuilder(
-              stream: ItemListProvider.of(context).itemListBloc.alphabeticalStream,
+              stream: ItemListProvider.of(context).bloc.alphabeticalStream,
               initialData: false,
               builder: (BuildContext context, AsyncSnapshot alphabetical) {
                 return IconButton(
                   icon: Icon(Icons.sort_by_alpha),
                   color: alphabetical.data ? Theme.of(context).primaryColor : Theme.of(context).disabledColor,
-                  onPressed: () => ItemListProvider.of(context).itemListBloc.toggleAlphabetical(),
+                  onPressed: () => ItemListProvider.of(context).bloc.toggleAlphabetical(),
                 );
               },
             ),
@@ -35,7 +32,7 @@ class QrListAppBar extends AppBar {
               icon: Icon(Icons.delete_sweep),
               color: Theme.of(context).errorColor,
               onPressed: () {
-                ItemListProvider.of(context).itemListBloc.deleteItemList();
+                ItemListProvider.of(context).bloc.deleteItemList();
                 Vibrate.feedback(FeedbackType.light);
                 scaffoldKey.currentState.removeCurrentSnackBar();
                 scaffoldKey.currentState.showSnackBar(
@@ -49,7 +46,7 @@ class QrListAppBar extends AppBar {
                     ),
                     action: new SnackBarAction(
                       label: AppLocalizations.of(context).undo,
-                      onPressed: () => ItemListProvider.of(context).itemListBloc.revertItemList(),
+                      onPressed: () => ItemListProvider.of(context).bloc.revertItemList(),
                     ),
                     backgroundColor: Theme.of(context).cardColor,
                   ),
@@ -69,7 +66,7 @@ class QrListAppBar extends AppBar {
                       MaterialPageRoute(
                         builder: (context) {
                           return PresentationMode(
-                            sortedItemList: ItemListProvider.of(context).itemListBloc.itemListController.value.toList()
+                            sortedItemList: ItemListProvider.of(context).bloc.itemList
                               ..sort((a, b) => a.name.compareTo(b.name)),
                             statusBarColor: Theme.of(context).bottomAppBarColor,
                           );
@@ -78,10 +75,10 @@ class QrListAppBar extends AppBar {
                     );
                     break;
                   case Options.toggleTheme:
-                    SettingsProvider.of(context).settingsBloc.toggleTheme();
+                    SettingsProvider.of(context).bloc.toggleTheme();
                     break;
                   case Options.toggleRotationLock:
-                    SettingsProvider.of(context).settingsBloc.toggleRotationLock();
+                    SettingsProvider.of(context).bloc.toggleRotationLock();
                     break;
                 }
               },
@@ -116,7 +113,7 @@ class QrListAppBar extends AppBar {
                       child: Row(
                         children: <Widget>[
                           StreamBuilder<Object>(
-                            stream: SettingsProvider.of(context).settingsBloc.darkThemeEnabled,
+                            stream: SettingsProvider.of(context).bloc.darkThemeEnabled,
                             initialData: false,
                             builder: (BuildContext context, AsyncSnapshot darkThemeEnabled) {
                               return Container(
@@ -148,7 +145,7 @@ class QrListAppBar extends AppBar {
                       child: Row(
                         children: <Widget>[
                           StreamBuilder<Object>(
-                            stream: SettingsProvider.of(context).settingsBloc.rotationLockEnabled,
+                            stream: SettingsProvider.of(context).bloc.rotationLockEnabled,
                             initialData: false,
                             builder: (BuildContext context, AsyncSnapshot rotationLockEnabled) {
                               return Container(
@@ -179,6 +176,9 @@ class QrListAppBar extends AppBar {
             ),
           ],
         );
+
+  final BuildContext context;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 }
 
 enum Options { presentationMode, toggleTheme, toggleRotationLock }

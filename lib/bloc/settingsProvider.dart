@@ -10,7 +10,7 @@ class SettingsProvider extends InheritedWidget {
 
   final Widget child;
 
-  final settingsBloc = SettingsBloc();
+  final bloc = SettingsBloc();
 
   static SettingsProvider of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(SettingsProvider) as SettingsProvider;

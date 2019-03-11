@@ -7,22 +7,24 @@ import 'package:qr_list/models/item.dart';
 import 'package:qr_list/services/database.service.dart';
 
 class ItemListBloc {
-  bool _alphabetical = false;
+  ItemListBloc() {
+    _inItemListSink.add(_itemList);
+    _inAlphabeticalSink.add(_alphabetical);
+    _loadData();
 
+    _addItemController.stream.listen(_addItemToItemList);
+    _deleteItemController.stream.listen(_removeItemFromItemList);
+  }
+
+  bool _alphabetical = false;
   List<Item> _itemList = [];
   List<Item> _backupItemList = [];
 
-  void dispose() {
-    itemListController.close();
-    _addItemController.close();
-    _deleteItemController.close();
-    alphabeticalController.close();
-  }
-
   // stream to publish the itemList
-  final itemListController = BehaviorSubject<List<Item>>();
-  StreamSink<List<Item>> get _inItemListSink => itemListController.sink;
-  Stream<List<Item>> get itemListStream => itemListController.stream;
+  final _itemListController = BehaviorSubject<List<Item>>();
+  StreamSink<List<Item>> get _inItemListSink => _itemListController.sink;
+  Stream<List<Item>> get itemListStream => _itemListController.stream;
+  List<Item> get itemList => _itemListController.value.toList();
 
   // stream to add item
   final _addItemController = StreamController<Item>();
@@ -36,15 +38,6 @@ class ItemListBloc {
   final alphabeticalController = BehaviorSubject<bool>();
   StreamSink<bool> get _inAlphabeticalSink => alphabeticalController.sink;
   Stream<bool> get alphabeticalStream => alphabeticalController.stream;
-
-  ItemListBloc() {
-    _inItemListSink.add(_itemList);
-    _inAlphabeticalSink.add(_alphabetical);
-    _loadData();
-
-    _addItemController.stream.listen(_addItemToItemList);
-    _deleteItemController.stream.listen(_removeItemFromItemList);
-  }
 
   void _addItemToItemList(Item item) {
     _itemList.add(item);
@@ -73,7 +66,7 @@ class ItemListBloc {
     databaseDeleteTable();
   }
 
-  // for undo functionality
+  // undo functionality
   void revertItemList() {
     _itemList = _backupItemList;
     _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
@@ -93,7 +86,8 @@ class ItemListBloc {
      * 3 -> success
      */
     if (item.number == '' || item.name == '') return 0;
-    if (_itemList.where((_item) => _item.name == item.name && _item.number == item.number).toList().length > 0) return 1;
+    if (_itemList.where((_item) => _item.name == item.name && _item.number == item.number).toList().length > 0)
+      return 1;
     if (_itemList.where((_item) => _item.number == item.number).toList().length > 0) return 2;
     return 3;
   }
@@ -113,5 +107,12 @@ class ItemListBloc {
     _itemList = await databaseItemList;
 
     _alphabetical ? _inItemListSink.add(_sortList(_itemList)) : _inItemListSink.add(_itemList);
+  }
+
+  void close() {
+    _itemListController.close();
+    _addItemController.close();
+    _deleteItemController.close();
+    alphabeticalController.close();
   }
 }

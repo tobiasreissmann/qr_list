@@ -10,7 +10,7 @@ class ItemListProvider extends InheritedWidget {
 
   final Widget child;
 
-  final itemListBloc = ItemListBloc();
+  final bloc = ItemListBloc();
 
   static ItemListProvider of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(ItemListProvider) as ItemListProvider;
