@@ -12,14 +12,11 @@ if (flutterRoot == null) {
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
+flutterVersionCode = '1.6'
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
+flutterVersionName = '1.6'
+
 
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -41,8 +38,8 @@ android {
         applicationId "com.tobiasreissmann.qrlist"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 16
+        versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
