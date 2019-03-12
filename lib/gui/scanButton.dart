@@ -65,7 +65,7 @@ class ScanButton extends StatelessWidget {
     Vibrate.feedback(FeedbackType.selection);
     try {
       // get scan
-      bool scanInterrupted = false;
+      bool scanInterrupted = false; 
       final String scan = await BarcodeScanner.scan().catchError((e) {
             scanInterrupted = true;
             print(e.toString());

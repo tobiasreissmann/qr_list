@@ -6,7 +6,6 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
     
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
