@@ -1,2 +1,2 @@
-enum ItemValidity { emptyFields, itemGiven, numberGiven, valid }
+enum ItemValidity { emptyFields, itemExists, numberExists, valid }
 

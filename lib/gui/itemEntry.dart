@@ -15,8 +15,7 @@ class ItemEntry extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width * 0.7,
+              Expanded(
                 child: Text(
                   item.name,
                   style: TextStyle(
@@ -27,19 +26,12 @@ class ItemEntry extends StatelessWidget {
                   textAlign: TextAlign.left,
                 ),
               ),
-              Flexible(
-                fit: FlexFit.tight,
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: Text(item.number,
-                      style: TextStyle(
-                        fontSize: 28.0,
-                        color: Theme.of(context).indicatorColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left),
-                ),
-              ),
+              Text(item.number,
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    color: Theme.of(context).indicatorColor,
+                  ),
+                  textAlign: TextAlign.left),
             ],
           ),
           Divider(),

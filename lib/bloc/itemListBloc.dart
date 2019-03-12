@@ -77,8 +77,8 @@ class ItemListBloc {
   ItemValidity validateItem(Item item) {
     if (item.number == '' || item.name == '') return ItemValidity.emptyFields;
     if (itemList.where((_item) => _item.name == item.name && _item.number == item.number).toList().length > 0)
-      return ItemValidity.itemGiven;
-    if (itemList.where((_item) => _item.number == item.number).toList().length > 0) return ItemValidity.numberGiven;
+      return ItemValidity.itemExists;
+    if (itemList.where((_item) => _item.number == item.number).toList().length > 0) return ItemValidity.numberExists;
     return ItemValidity.valid;
   }
 

@@ -47,52 +47,31 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
           body: Builder(
             builder: (context) => Stack(
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: StreamBuilder(
-                              stream: ItemListProvider.of(context).bloc.itemListStream,
-                              builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
-                                return ListView(
-                                  children: <Widget>[_buildPlaceholder(65)]
-                                    ..addAll(itemList.hasData
-                                        ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
-                                        : [_buildPlaceholder(0)].toList())
-                                    ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
-                                  controller: _listScrollController,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                    StreamBuilder(
+                      stream: ItemListProvider.of(context).bloc.itemListStream,
+                      builder: (BuildContext context, AsyncSnapshot<List<Item>> itemList) {
+                        return ListView(
+                          children: <Widget>[_buildPlaceholder(59)]
+                            ..addAll(itemList.hasData
+                                ? itemList.data.map((item) => _buildItemEntry(context, item)).toList()
+                                : [_buildPlaceholder(0)].toList())
+                            ..addAll([_buildPlaceholder(16), ItemMask(), _buildPlaceholder(200)].toList()),
+                          controller: _listScrollController,
+                        );
+                      },
                     ),
-                    BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                      child: Container(
-                        height: 80,
-                        child: QrListAppBar(
-                          context: context,
-                          scaffoldKey: _key,
-                        ),
-                      ),
+                    QrListAppBar(
+                      scaffoldKey: _key,
                     ),
                   ],
                 ),
           ),
         ),
-        AnimatedBuilder(
-          animation: _scanAnimationController,
-          builder: (BuildContext context, Widget child) {
-            return Transform(
-              transform: Matrix4.translationValues(0.0, _scanAnimation.value * 200, 0.0),
-              child: ScanButton(scrollController: _listScrollController, scaffoldKey: _key),
-            );
-          },
+        ScanButton(
+          scrollController: _listScrollController,
+          scaffoldKey: _key,
+          scanAnimationController: _scanAnimationController,
+          scanAnimation: _scanAnimation,
         ),
       ],
     );

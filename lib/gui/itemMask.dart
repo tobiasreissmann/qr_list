@@ -26,29 +26,27 @@ class _ItemMaskState extends State<ItemMask> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: Container(
-              child: TextFormField(
-                keyboardAppearance: Theme.of(context).brightness,
-                controller: _nameTextController,
-                focusNode: _nameFocusNode,
-                scrollPadding: const EdgeInsets.all(-50),
-                onFieldSubmitted: (string) {
-                  if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                  if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                  _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
-                },
-                style: new TextStyle(
-                  color: Theme.of(context).indicatorColor,
-                  fontSize: 20,
+            child: TextFormField(
+              keyboardAppearance: Theme.of(context).brightness,
+              controller: _nameTextController,
+              focusNode: _nameFocusNode,
+              scrollPadding: const EdgeInsets.all(-50),
+              onFieldSubmitted: (string) {
+                if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
+              },
+              style: new TextStyle(
+                color: Theme.of(context).indicatorColor,
+                fontSize: 20,
+              ),
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
                 ),
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                    gapPadding: 0,
-                  ),
-                  labelText: AppLocalizations.of(context).item,
-                ),
+                labelText: AppLocalizations.of(context).item,
               ),
             ),
           ),
@@ -56,38 +54,34 @@ class _ItemMaskState extends State<ItemMask> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
           ),
           Expanded(
-            child: Container(
-              child: TextFormField(
-                keyboardAppearance: Theme.of(context).brightness,
-                controller: _numberTextController,
-                focusNode: _numberFocusNode,
-                scrollPadding: const EdgeInsets.all(-50),
-                onFieldSubmitted: (string) {
-                  if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                  if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                  _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
-                },
-                style: TextStyle(
-                  color: Theme.of(context).indicatorColor,
-                  fontSize: 20,
+            child: TextFormField(
+              keyboardAppearance: Theme.of(context).brightness,
+              controller: _numberTextController,
+              focusNode: _numberFocusNode,
+              scrollPadding: const EdgeInsets.all(-50),
+              onFieldSubmitted: (string) {
+                if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
+              },
+              style: TextStyle(
+                color: Theme.of(context).indicatorColor,
+                fontSize: 20,
+              ),
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
                 ),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                    gapPadding: 0,
-                  ),
-                  labelText: AppLocalizations.of(context).number,
-                ),
+                labelText: AppLocalizations.of(context).number,
               ),
             ),
           ),
-          Container(
-            child: IconButton(
-              icon: Icon(Icons.playlist_add),
-              color: Theme.of(context).primaryColor,
-              onPressed: () => _confirmItem(context, Item(_nameTextController.text, _numberTextController.text)),
-            ),
+          IconButton(
+            icon: Icon(Icons.playlist_add),
+            color: Theme.of(context).primaryColor,
+            onPressed: () => _confirmItem(context, Item(_nameTextController.text, _numberTextController.text)),
           ),
         ],
       ),
@@ -98,9 +92,9 @@ class _ItemMaskState extends State<ItemMask> {
     switch (ItemListProvider.of(context).bloc.validateItem(item)) {
       case ItemValidity.emptyFields:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).emptyFields, 3);
-      case ItemValidity.itemGiven:
+      case ItemValidity.itemExists:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
-      case ItemValidity.numberGiven:
+      case ItemValidity.numberExists:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
       case ItemValidity.valid:
         _addItemToItemList(context, item);
@@ -117,20 +111,26 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
-      BuildContext context, FeedbackType feedbacktype, String feedbackMessage, int duration) {
+    BuildContext context,
+    FeedbackType feedbacktype,
+    String feedbackMessage,
+    int duration,
+  ) {
     Vibrate.feedback(feedbacktype);
     Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(
-        feedbackMessage,
-        style: TextStyle(
-          color: Theme.of(context).indicatorColor,
-          fontWeight: FontWeight.w400,
+    return Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(
+            color: Theme.of(context).indicatorColor,
+            fontWeight: FontWeight.w400,
+          ),
         ),
+        duration: Duration(seconds: duration),
+        backgroundColor: Theme.of(context).cardColor,
       ),
-      duration: Duration(seconds: duration),
-      backgroundColor: Theme.of(context).cardColor,
-    ));
+    );
   }
 
   @override

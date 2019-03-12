@@ -9,40 +9,55 @@ import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
 
 class ScanButton extends StatelessWidget {
-  ScanButton({@required this.scrollController, @required this.scaffoldKey});
+  ScanButton({
+    @required this.scrollController,
+    @required this.scaffoldKey,
+    @required this.scanAnimationController,
+    @required this.scanAnimation,
+  });
 
   final GlobalKey<ScaffoldState> scaffoldKey;
   final ScrollController scrollController;
+  final AnimationController scanAnimationController;
+  final Animation scanAnimation;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 50),
-            child: Container(
-              child: ButtonTheme(
-                minWidth: 200,
-                height: 70,
-                buttonColor: Theme.of(context).buttonColor,
-                splashColor: Theme.of(context).splashColor,
-                child: RaisedButton(
-                  elevation: 9,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    return _readCode(context);
-                  },
-                  child: Text(AppLocalizations.of(context).scanButton,
-                      style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+    return AnimatedBuilder(
+      animation: scanAnimationController,
+      builder: (BuildContext context, Widget child) {
+        return Transform(
+          transform: Matrix4.translationValues(0.0, scanAnimation.value * 200, 0.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: Container(
+                    child: ButtonTheme(
+                      minWidth: 200,
+                      height: 70,
+                      buttonColor: Theme.of(context).buttonColor,
+                      splashColor: Theme.of(context).splashColor,
+                      child: RaisedButton(
+                        elevation: 9,
+                        textColor: Colors.white,
+                        onPressed: () {
+                          return _readCode(context);
+                        },
+                        child: Text(AppLocalizations.of(context).scanButton,
+                            style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w300)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -66,9 +81,9 @@ class ScanButton extends StatelessWidget {
         case ItemValidity.emptyFields:
           return _sendFeedbackMessage(
               context, FeedbackType.warning, AppLocalizations.of(context).undefinedScanIssue, 3);
-        case ItemValidity.itemGiven:
+        case ItemValidity.itemExists:
           return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
-        case ItemValidity.numberGiven:
+        case ItemValidity.numberExists:
           return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
         case ItemValidity.valid:
           // no problems -> add item to itemList
