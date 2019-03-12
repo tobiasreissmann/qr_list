@@ -23,7 +23,7 @@ class _QrListAppBarState extends State<QrListAppBar> {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
       child: Container(
-        height: 80,
+        height: 81,
         child: AppBar(
           backgroundColor: Theme.of(context).bottomAppBarColor,
           brightness: Theme.of(context).brightness,
