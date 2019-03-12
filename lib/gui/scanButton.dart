@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
-import 'package:qr_list/models/itemValidity.dart';
 import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
+import 'package:qr_list/models/itemValidity.dart';
 
 class ScanButton extends StatelessWidget {
   ScanButton({
@@ -68,7 +68,7 @@ class ScanButton extends StatelessWidget {
       final String scan = await BarcodeScanner.scan();
 
       // check if scan is of invalid format
-      final RegExp expScan = new RegExp(r"^VG\s([0-9]{3,4})");
+      final RegExp expScan = RegExp(r"^VG\s([0-9]{3,4})");
       if (!expScan.hasMatch(scan))
         return _sendFeedbackMessage(context, FeedbackType.error, AppLocalizations.of(context).unsupportedScan, 3);
 
@@ -124,23 +124,16 @@ class ScanButton extends StatelessWidget {
   }
 
   Item _readItemFromScan(String scan) {
-    // define regex for validation checks
-    final RegExp expNumber = new RegExp(r"([0-9])\w+");
-    final RegExp expNameKg = new RegExp(r"^.*\skg\s");
-    final RegExp expNameBund = new RegExp(r"^.*\sBund\s");
-    final RegExp expNameStueck = new RegExp(r"^.*\sStück\s");
-    final RegExp expNameSchale = new RegExp(r"^.*\sSchale\s");
+    for (String itemTypeIndicator in [' kg ', ' Bund ', ' Stück ', ' Schale ']) {
+      List<String> splitted = scan.split(itemTypeIndicator);
+      if (splitted.length > 1)
+        return Item(
+          splitted[1],
+          RegExp(r"([0-9])\w+").stringMatch(scan),
+        );
+    }
 
-    String name = '';
-    String number = expNumber.stringMatch(scan);
-
-    // find item name (differences between diffrent item types)
-    if (expNameKg.hasMatch(scan)) name = scan.split(" kg ")[1];
-    if (expNameBund.hasMatch(scan)) name = scan.split(" Bund ")[1];
-    if (expNameStueck.hasMatch(scan)) name = scan.split(" Stück ")[1];
-    if (expNameSchale.hasMatch(scan)) name = scan.split(" Schale ")[1];
-
-    return Item(name, number);
+    return Item('', '');
   }
 
   void _addItemToItemList(BuildContext context, Item item) {

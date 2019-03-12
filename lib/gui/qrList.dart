@@ -110,7 +110,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
             fontWeight: FontWeight.w400,
           ),
         ),
-        action: new SnackBarAction(
+        action: SnackBarAction(
           label: AppLocalizations.of(context).undo,
           onPressed: () => ItemListProvider.of(context).bloc.revertItemList(),
         ),

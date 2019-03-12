@@ -9,15 +9,15 @@ import 'package:qr_list/models/itemValidity.dart';
 class ItemMask extends StatefulWidget {
   @override
   _ItemMaskState createState() {
-    return new _ItemMaskState();
+    return _ItemMaskState();
   }
 }
 
 class _ItemMaskState extends State<ItemMask> {
-  TextEditingController _nameTextController = new TextEditingController();
-  TextEditingController _numberTextController = new TextEditingController();
-  FocusNode _nameFocusNode = new FocusNode();
-  FocusNode _numberFocusNode = new FocusNode();
+  TextEditingController _nameTextController = TextEditingController();
+  TextEditingController _numberTextController = TextEditingController();
+  FocusNode _nameFocusNode = FocusNode();
+  FocusNode _numberFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _ItemMaskState extends State<ItemMask> {
                 if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
                 _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
               },
-              style: new TextStyle(
+              style: TextStyle(
                 color: Theme.of(context).indicatorColor,
                 fontSize: 20,
               ),
