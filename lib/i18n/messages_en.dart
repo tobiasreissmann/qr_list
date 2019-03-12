@@ -34,6 +34,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "undo" : MessageLookupByLibrary.simpleMessage("UNDO"),
     "unsupportedScan" : MessageLookupByLibrary.simpleMessage("This barcode / qr-code is not supported"),
     "itemDeleted" : MessageLookupByLibrary.simpleMessage("removed"),
-    "itemAdded" : MessageLookupByLibrary.simpleMessage("added")
+    "itemAdded" : MessageLookupByLibrary.simpleMessage("added"),
+    "noItems" : MessageLookupByLibrary.simpleMessage("no items available"),
+    "rotationLock" : MessageLookupByLibrary.simpleMessage("Rotation Lock"),
+    "darkMode" : MessageLookupByLibrary.simpleMessage("Dark Theme"),
+    "presentationMode" : MessageLookupByLibrary.simpleMessage("Present")
   };
 }

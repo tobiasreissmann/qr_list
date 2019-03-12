@@ -34,6 +34,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "undo" : MessageLookupByLibrary.simpleMessage("ZURÜCK"),
     "unsupportedScan" : MessageLookupByLibrary.simpleMessage("Dieser Bar-/ QR-Code wird nicht unterstützt."),
     "itemDeleted" : MessageLookupByLibrary.simpleMessage("entfernt"),
-    "itemAdded" : MessageLookupByLibrary.simpleMessage("hinzugefügt")
+    "itemAdded" : MessageLookupByLibrary.simpleMessage("hinzugefügt"),
+    "noItems" : MessageLookupByLibrary.simpleMessage("keine Artikel verfügbar"),
+    "rotationLock" : MessageLookupByLibrary.simpleMessage("Rotation sperren"),
+    "darkMode" : MessageLookupByLibrary.simpleMessage("Dunkles Design"),
+    "presentationMode" : MessageLookupByLibrary.simpleMessage("Präsentieren")
   };
 }

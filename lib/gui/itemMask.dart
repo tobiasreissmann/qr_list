@@ -1,72 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:qr_list/locale/locales.dart';
 import 'package:vibrate/vibrate.dart';
 
 import 'package:qr_list/bloc/itemListProvider.dart';
+import 'package:qr_list/locale/locales.dart';
 import 'package:qr_list/models/item.dart';
+import 'package:qr_list/models/itemValidity.dart';
 
 class ItemMask extends StatefulWidget {
   @override
   _ItemMaskState createState() {
-    return new _ItemMaskState();
+    return _ItemMaskState();
   }
 }
 
 class _ItemMaskState extends State<ItemMask> {
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _numberController = new TextEditingController();
-  FocusNode _nameFocusNode = new FocusNode();
-  FocusNode _numberFocusNode = new FocusNode();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _numberController.dispose();
-    _nameFocusNode.dispose();
-    _numberFocusNode.dispose();
-    super.dispose();
-  }
+  TextEditingController _nameTextController = TextEditingController();
+  TextEditingController _numberTextController = TextEditingController();
+  FocusNode _nameFocusNode = FocusNode();
+  FocusNode _numberFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
-      child: Row(children: <Widget>[
-        Flexible(
-          flex: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.4,
+      child: Row(
+        children: <Widget>[
+          Expanded(
             child: TextFormField(
-              controller: _nameController,
+              keyboardAppearance: Theme.of(context).brightness,
+              controller: _nameTextController,
               focusNode: _nameFocusNode,
+              scrollPadding: const EdgeInsets.all(-50),
               onFieldSubmitted: (string) {
-                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                _confirmItem(context, Item(_nameController.text, _numberController.text));
+                if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
               },
-              style: new TextStyle(
+              style: TextStyle(
                 color: Theme.of(context).indicatorColor,
                 fontSize: 20,
               ),
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
+                ),
                 labelText: AppLocalizations.of(context).item,
               ),
             ),
           ),
-        ),
-        Padding(padding: EdgeInsets.symmetric(horizontal: 8)),
-        Flexible(
-          flex: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.4,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+          ),
+          Expanded(
             child: TextFormField(
-              controller: _numberController,
+              keyboardAppearance: Theme.of(context).brightness,
+              controller: _numberTextController,
               focusNode: _numberFocusNode,
+              scrollPadding: const EdgeInsets.all(-50),
               onFieldSubmitted: (string) {
-                if (_numberController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
-                if (_nameController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
-                _confirmItem(context, Item(_nameController.text, _numberController.text));
+                if (_numberTextController.text == '') return FocusScope.of(context).requestFocus(_numberFocusNode);
+                if (_nameTextController.text == '') return FocusScope.of(context).requestFocus(_nameFocusNode);
+                _confirmItem(context, Item(_nameTextController.text, _numberTextController.text));
               },
               style: TextStyle(
                 color: Theme.of(context).indicatorColor,
@@ -74,36 +70,33 @@ class _ItemMaskState extends State<ItemMask> {
               ),
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gapPadding: 0,
+                ),
                 labelText: AppLocalizations.of(context).number,
               ),
             ),
           ),
-        ),
-        Flexible(
-          flex: 1,
-          child: Container(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: Icon(Icons.playlist_add),
-              color: Theme.of(context).primaryColor,
-              onPressed: () => _confirmItem(context, Item(_nameController.text, _numberController.text)),
-            ),
+          IconButton(
+            icon: Icon(Icons.playlist_add),
+            color: Theme.of(context).primaryColor,
+            onPressed: () => _confirmItem(context, Item(_nameTextController.text, _numberTextController.text)),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _confirmItem(BuildContext context, Item item) {
-    final _itemListBloc = ItemListProvider.of(context).itemListBloc;
-    switch (_itemListBloc.validateItem(item)) {
-      case 0:
+    switch (ItemListProvider.of(context).bloc.validateItem(item)) {
+      case ItemValidity.emptyFields:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).emptyFields, 3);
-      case 1:
+      case ItemValidity.itemExists:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).itemExists, 3);
-      case 2:
+      case ItemValidity.numberExists:
         return _sendFeedbackMessage(context, FeedbackType.warning, AppLocalizations.of(context).numberExists, 3);
-      case 3:
+      case ItemValidity.valid:
         _addItemToItemList(context, item);
         return null;
       default:
@@ -112,18 +105,40 @@ class _ItemMaskState extends State<ItemMask> {
   }
 
   void _addItemToItemList(BuildContext context, Item item) {
-    ItemListProvider.of(context).itemListBloc.addItemSink.add(item);
-    _nameController.clear();
-    _numberController.clear();
+    ItemListProvider.of(context).bloc.addItem.add(item);
+    _nameTextController.clear();
+    _numberTextController.clear();
   }
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _sendFeedbackMessage(
-      BuildContext context, FeedbackType feedbacktype, String feedbackMessage, int duration) {
+    BuildContext context,
+    FeedbackType feedbacktype,
+    String feedbackMessage,
+    int duration,
+  ) {
     Vibrate.feedback(feedbacktype);
     Scaffold.of(context).removeCurrentSnackBar();
-    return Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text(feedbackMessage),
-      duration: Duration(seconds: duration),
-    ));
+    return Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          feedbackMessage,
+          style: TextStyle(
+            color: Theme.of(context).indicatorColor,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        duration: Duration(seconds: duration),
+        backgroundColor: Theme.of(context).cardColor,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameTextController.dispose();
+    _numberTextController.dispose();
+    _nameFocusNode.dispose();
+    _numberFocusNode.dispose();
+    super.dispose();
   }
 }

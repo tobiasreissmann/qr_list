@@ -1,116 +1,105 @@
 import 'dart:async';
+
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:qr_list/models/itemValidity.dart';
 import 'package:qr_list/models/item.dart';
 import 'package:qr_list/services/database.service.dart';
 
 class ItemListBloc {
-  bool _alphabetical = false;
+  ItemListBloc() {
+    _loadData();
 
-  List<Item> _itemList = [];
-  List<Item> _backupItemList = [];
-
-  void dispose() {
-    _itemListController.close();
-    _addItemController.close();
-    _deleteItemController.close();
-    _alphabeticalController.close();
+    _addItemStream.listen(_addItemToItemList);
+    _deleteItemStream.listen(_removeItemFromItemList);
   }
+
+  // previous for revert / undo features
+  List<Item> _backupItemList = [];
 
   // stream to publish the itemList
   final _itemListController = BehaviorSubject<List<Item>>();
   StreamSink<List<Item>> get _inItemListSink => _itemListController.sink;
   Stream<List<Item>> get itemListStream => _itemListController.stream;
+  List<Item> get itemList => _itemListController.value.toList();
 
   // stream to add item
   final _addItemController = StreamController<Item>();
-  StreamSink<Item> get addItemSink => _addItemController.sink;
+  StreamSink<Item> get addItem => _addItemController.sink;
+  Stream<Item> get _addItemStream => _addItemController.stream;
 
   // stream to delete item
   final _deleteItemController = StreamController<String>();
-  StreamSink<String> get deleteItemSink => _deleteItemController.sink;
+  StreamSink<String> get deleteItem => _deleteItemController.sink;
+  Stream<String> get _deleteItemStream => _deleteItemController.stream;
 
-  // stream to publish alphabetical
+  // stream to toggle alphabetical
   final _alphabeticalController = BehaviorSubject<bool>();
   StreamSink<bool> get _inAlphabeticalSink => _alphabeticalController.sink;
   Stream<bool> get alphabeticalStream => _alphabeticalController.stream;
+  bool get alphabetical => _alphabeticalController.value;
 
-  ItemListBloc() {
-    _inItemListSink.add(_itemList);
-    _inAlphabeticalSink.add(_alphabetical);
-    _loadData();
-
-    _addItemController.stream.listen(_addItemToItemList);
-    _deleteItemController.stream.listen(_removeItemFromItemList);
-  }
-
-  void _addItemToItemList(Item item) {
-    _itemList.add(item);
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
-    databaseAddItem(item);
+  void _addItemToItemList(Item _item) {
+    _inItemListSink.add(_formatItemList(itemList.toList()..add(_item)));
+    databaseAddItem(_item);
   }
 
   void _removeItemFromItemList(String number) {
-    _backupItemList = _itemList;
-    _itemList = _itemList.where((_item) => _item.number != number).toList();
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _backupItemList = itemList;
+    _inItemListSink.add(_formatItemList(itemList.where((_item) => _item.number != number).toList()));
     databaseRemoveItem(number);
   }
 
-  void toggleAlphabetical() {
-    _alphabetical = !_alphabetical;
-    _inAlphabeticalSink.add(_alphabetical);
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+  void toggleAlphabetical() async {
+    _inAlphabeticalSink.add(!alphabetical);
+    // need to get databaseItemList to possibly restore original order
+    _inItemListSink.add(_formatItemList(await databaseItemList));
     _saveSettings();
   }
 
   void deleteItemList() {
-    _backupItemList = _itemList;
-    _itemList = [];
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+    _backupItemList = itemList;
+    _inItemListSink.add([]);
     databaseDeleteTable();
   }
 
-  // for undo functionality
+  // undo functionality
   void revertItemList() {
-    _itemList = _backupItemList;
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
-    databaseSaveItemList(_itemList);
+    _inItemListSink.add(_formatItemList(_backupItemList));
+    databaseSaveItemList(itemList);
   }
 
-  List<Item> _sortList(List<Item> _list) {
-    return _list..sort((a, b) => a.name.compareTo(b.name));
+  List<Item> _formatItemList(List<Item> _itemList) {
+    return alphabetical ? (_itemList.toList()..sort((a, b) => a.name.compareTo(b.name))) : _itemList.toList();
   }
 
-  int validateItem(Item item) {
-    /*
-     * number legend :
-     * 0 -> one field is empty
-     * 1 -> item is already listed
-     * 2 -> number is already given 
-     * 3 -> success
-     */
-    if (item.number == '' || item.name == '') return 0;
-    if (_itemList.where((_item) => _item.name == item.name && _item.number == item.number).toList().length > 0) return 1;
-    if (_itemList.where((_item) => _item.number == item.number).toList().length > 0) return 2;
-    return 3;
+  ItemValidity validateItem(Item item) {
+    if (item.number == '' || item.name == '') return ItemValidity.emptyFields;
+    if (itemList.where((_item) => _item.name == item.name && _item.number == item.number).toList().length > 0)
+      return ItemValidity.itemExists;
+    if (itemList.where((_item) => _item.number == item.number).toList().length > 0) return ItemValidity.numberExists;
+    return ItemValidity.valid;
   }
 
   void _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('alphabetical', _alphabetical);
+    prefs.setBool('alphabetical', alphabetical);
   }
 
   void _loadData() async {
     // getting settings
     final prefs = await SharedPreferences.getInstance();
-    _alphabetical = prefs.getBool('alphabetical') ?? false;
-    _inAlphabeticalSink.add(_alphabetical);
+    _inAlphabeticalSink.add(prefs.getBool('alphabetical') ?? false);
 
     // getting data
-    _itemList = await databaseItemList;
+    _inItemListSink.add(_formatItemList(await databaseItemList));
+  }
 
-    _alphabetical ? _inItemListSink.add(_sortList(_itemList.toList())) : _inItemListSink.add(_itemList);
+  void close() {
+    _itemListController.close();
+    _addItemController.close();
+    _deleteItemController.close();
+    _alphabeticalController.close();
   }
 }

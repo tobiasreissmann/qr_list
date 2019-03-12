@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_list/i18n/messages_all.dart';
@@ -134,6 +135,38 @@ class AppLocalizations {
       'added',
       name: 'itemAdded',
       desc: 'Feedback when item was added.',
+    );
+  }
+
+  String get noItems {
+    return Intl.message(
+      'no items available',
+      name: 'noItems',
+      desc: 'Feedback on presentation mode when no items in list.',
+    );
+  }
+
+  String get rotationLock {
+    return Intl.message(
+      'Rotation Lock',
+      name: 'rotationLock',
+      desc: 'Describtion for rotation lock option.',
+    );
+  }
+
+  String get darkMode {
+    return Intl.message(
+      'Dark Theme',
+      name: 'darkMode',
+      desc: 'Describtion for dark mode option.',
+    );
+  }
+
+  String get presentationMode {
+    return Intl.message(
+      'Present',
+      name: 'presentationMode',
+      desc: 'Describtion for presentation mode option.',
     );
   }
 }
