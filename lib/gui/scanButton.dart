@@ -65,7 +65,13 @@ class ScanButton extends StatelessWidget {
     Vibrate.feedback(FeedbackType.selection);
     try {
       // get scan
-      final String scan = await BarcodeScanner.scan();
+      bool scanInterrupted;
+      final String scan = await BarcodeScanner.scan().catchError((e) {
+            scanInterrupted = true;
+            print(e.toString());
+          }) ??
+          '';
+      if (scanInterrupted) return null;
 
       // check if scan is of invalid format
       final RegExp expScan = RegExp(r"^VG\s([0-9]{3,4})");
