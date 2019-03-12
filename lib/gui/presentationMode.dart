@@ -15,7 +15,7 @@ class PresentationMode extends StatefulWidget {
   _PresentationModeState createState() => _PresentationModeState();
 }
 
-class _PresentationModeState extends State<PresentationMode> with TickerProviderStateMixin {
+class _PresentationModeState extends State<PresentationMode> {
   @override
   Widget build(BuildContext context) {
     return Stack(
