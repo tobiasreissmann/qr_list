@@ -12,18 +12,10 @@ class PresentationMode extends StatefulWidget {
   final List<Item> sortedItemList;
   final Color statusBarColor;
 
-  _PresentationModeState createState() => _PresentationModeState(
-        sortedItemList: sortedItemList,
-        statusBarColor: statusBarColor,
-      );
+  _PresentationModeState createState() => _PresentationModeState();
 }
 
 class _PresentationModeState extends State<PresentationMode> with TickerProviderStateMixin {
-  _PresentationModeState({@required this.sortedItemList, @required this.statusBarColor});
-
-  final List<Item> sortedItemList;
-  final Color statusBarColor;
-
   AnimationController _backAnimationController;
   Animation _backAnimation;
 
@@ -31,7 +23,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
   void initState() {
     super.initState();
     _backAnimationController = AnimationController(
-      duration: Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 700),
       vsync: this,
     );
     _backAnimation = Tween(begin: 1.0, end: 0.0).animate(
@@ -49,9 +41,9 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
       children: <Widget>[
         Scaffold(
           body: Container(
-            child: sortedItemList.length > 0
+            child: widget.sortedItemList.length > 0
                 ? ListView(
-                    children: sortedItemList.map((item) => _buildItemEntry(item)).toList(),
+                    children: widget.sortedItemList.map((item) => _buildItemEntry(item)).toList(),
                   )
                 : Center(
                     heightFactor: 3,
@@ -104,7 +96,7 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
           child: Container(
-            color: statusBarColor,
+            color: widget.statusBarColor,
             height: 24,
           ),
         ),
@@ -115,7 +107,8 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
   Widget _buildItemEntry(Item item) {
     return Dismissible(
       key: Key(item.number),
-      onDismissed: (direction) => setState(() => sortedItemList.removeWhere((_item) => _item.number == item.number)),
+      onDismissed: (direction) =>
+          setState(() => widget.sortedItemList.removeWhere((_item) => _item.number == item.number)),
       child: ItemEntry(
         item: item,
       ),

@@ -55,5 +55,6 @@ class QRListAppState extends State<QRListApp> {
   void dispose() {
     super.dispose();
     SettingsProvider.of(context).bloc.close();
+    ItemListProvider.of(context).bloc.close();
   }
 }

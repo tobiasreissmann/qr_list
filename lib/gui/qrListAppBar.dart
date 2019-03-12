@@ -14,14 +14,10 @@ class QrListAppBar extends StatefulWidget {
   final Widget child;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  _QrListAppBarState createState() => _QrListAppBarState(scaffoldKey: scaffoldKey);
+  _QrListAppBarState createState() => _QrListAppBarState();
 }
 
 class _QrListAppBarState extends State<QrListAppBar> {
-  _QrListAppBarState({@required this.scaffoldKey});
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
-
   @override
   Widget build(BuildContext context) {
     return BackdropFilter(
@@ -179,8 +175,8 @@ class _QrListAppBarState extends State<QrListAppBar> {
   _deleteItemList() {
     ItemListProvider.of(context).bloc.deleteItemList();
     Vibrate.feedback(FeedbackType.light);
-    scaffoldKey.currentState.removeCurrentSnackBar();
-    scaffoldKey.currentState.showSnackBar(
+    widget.scaffoldKey.currentState.removeCurrentSnackBar();
+    widget.scaffoldKey.currentState.showSnackBar(
       SnackBar(
         content: Text(
           AppLocalizations.of(context).deleteItemList,

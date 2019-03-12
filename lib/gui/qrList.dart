@@ -14,10 +14,10 @@ import 'package:qr_list/models/item.dart';
 
 class QRList extends StatefulWidget {
   @override
-  _QRList createState() => _QRList();
+  _QRListState createState() => _QRListState();
 }
 
-class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
+class _QRListState extends State<QRList> with SingleTickerProviderStateMixin {
   final _key = GlobalKey<ScaffoldState>();
   ScrollController _listScrollController = ScrollController();
   AnimationController _scanAnimationController;
@@ -26,17 +26,7 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _scanAnimationController = AnimationController(
-      duration: Duration(milliseconds: 700),
-      vsync: this,
-    );
-    _scanAnimation = Tween(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        curve: Curves.fastOutSlowIn,
-        parent: _scanAnimationController,
-      ),
-    );
-    _scanAnimationController.forward();
+    _startScanButtonAnimation();
   }
 
   Widget build(BuildContext context) {
@@ -119,9 +109,17 @@ class _QRList extends State<QRList> with SingleTickerProviderStateMixin {
     );
   }
 
-  @override
-  dispose() {
-    ItemListProvider.of(context).bloc.close();
-    super.dispose();
+  _startScanButtonAnimation() {
+    _scanAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _scanAnimation = Tween(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        curve: Curves.fastOutSlowIn,
+        parent: _scanAnimationController,
+      ),
+    );
+    _scanAnimationController.forward();
   }
 }
