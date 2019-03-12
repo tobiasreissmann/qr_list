@@ -57,7 +57,10 @@ class _PresentationModeState extends State<PresentationMode> with TickerProvider
                       onPressed: () => Navigator.pop(context),
                       textColor: Colors.white,
                       elevation: 9,
-                      child: Icon(Icons.arrow_back),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 36,
+                      ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
                     ),
                   ),
